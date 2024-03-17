@@ -1,9 +1,6 @@
 package web.ThuThapMau.entities.compositeKeyId;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.entities.Project;
 
@@ -12,11 +9,11 @@ import java.io.Serializable;
 @Embeddable
 public class ProjectMemberId implements Serializable {
     @ManyToOne
-    @Column(name ="user_id")
+    @JoinColumn(name ="user_id")
     private User user;
 
     @ManyToOne
-    @Column(name ="project_id")
+    @JoinColumn(name ="project_id")
     private  Project project;
 
 }

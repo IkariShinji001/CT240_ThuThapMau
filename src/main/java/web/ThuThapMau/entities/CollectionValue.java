@@ -17,13 +17,10 @@ public class CollectionValue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long form_value_id;
     private String form_value;
-    private String form_submit_time;
+    private Long form_submit_time;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "form_id")
-    private CollectionForm form;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "form_attribute_id")
+    @JoinColumn(name = "form_id", insertable = false, updatable = false)
+    @JoinColumn(name = "form_attribute_id", insertable = false, updatable = false)
     private CollectionAttribute form_attribute;
 }

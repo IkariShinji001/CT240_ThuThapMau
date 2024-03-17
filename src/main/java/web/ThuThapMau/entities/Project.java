@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import web.ThuThapMau.entities.Collection;
 
 import java.util.Date;
 import java.util.List;
@@ -26,7 +25,6 @@ public class Project {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "project")
     private List<Collection> collections;
-
 }
