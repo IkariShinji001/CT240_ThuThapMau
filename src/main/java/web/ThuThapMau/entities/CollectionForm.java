@@ -26,9 +26,9 @@ public class CollectionForm {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "form")
+    @OneToMany(mappedBy = "collection_form")
     private List<CollectionAttribute> collection_attributes;
 
-    @OneToMany(mappedBy = "form")
+    @OneToMany(mappedBy = "collection_form")
     private List<CollectionValue> collection_values;
 }

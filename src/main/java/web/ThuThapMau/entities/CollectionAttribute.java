@@ -1,9 +1,10 @@
 package web.ThuThapMau.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import web.ThuThapMau.entities.compositeKeyId.CollectionAttributeId;
-
-import java.util.List;
 
 @Entity(name = "CollectionAttribute")
 public class CollectionAttribute {
@@ -12,6 +13,6 @@ public class CollectionAttribute {
     private String form_attribute_name;
     @ManyToOne
     @JoinColumn(name = "form_id", insertable = false, updatable = false)
-    private CollectionForm form;
+    private CollectionForm collection_form;
 
 }
