@@ -16,8 +16,12 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @GetMapping
-    public ResponseEntity<List<Project>> getAllProjectByUserId(@RequestParam Long user_id) {
+    @GetMapping("/users/{id}")
+    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name) {
+        if(!project_name.isEmpty()){
+            List<Project> projects = projectService.getAllProjectByUserId(user_id, project_name);
+            return ResponseEntity.status(200).body(projects);
+        }
         List<Project> projects = projectService.getAllProjectByUserId(user_id);
         return ResponseEntity.status(200).body(projects);
     }
@@ -26,6 +30,13 @@ public class ProjectController {
     public ResponseEntity<Optional<Project>> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
         Optional<Project> project = projectService.getProjectByProjectId(project_id);
         return ResponseEntity.status(200).body(project);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
+        projectService.updateProjectById(project_id, payload);
+        return ResponseEntity.status(200).body("Cập nhật thành công");
+
     }
 
     @PostMapping

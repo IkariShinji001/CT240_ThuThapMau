@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,9 +24,4 @@ public class CollectionForm {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "collection_form")
-    private List<CollectionAttribute> collection_attributes;
-
-    @OneToMany(mappedBy = "collection_form")
-    private List<CollectionValue> collection_values;
 }

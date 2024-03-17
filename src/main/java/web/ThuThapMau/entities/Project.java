@@ -27,4 +27,5 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Collection> collections;
+
 }

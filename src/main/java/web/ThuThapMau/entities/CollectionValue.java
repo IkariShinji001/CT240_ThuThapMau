@@ -24,7 +24,4 @@ public class CollectionValue {
     @JoinColumn(name = "form_attribute_id", insertable = false, updatable = false)
     private CollectionAttribute form_attribute;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "form_id", insertable = false, updatable = false)
-    private CollectionForm collection_form;
 }
