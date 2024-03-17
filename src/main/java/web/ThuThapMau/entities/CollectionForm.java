@@ -20,15 +20,15 @@ public class CollectionForm {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "collection_id")
-    private Collection collection_id;
+    private Collection collection;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private User user_id;
+    private User user;
 
-    @OneToMany(mappedBy = "form_id")
+    @OneToMany(mappedBy = "form")
     private List<CollectionAttribute> collection_attributes;
 
-    @OneToMany(mappedBy = "form_id")
+    @OneToMany(mappedBy = "form")
     private List<CollectionValue> collection_values;
 }

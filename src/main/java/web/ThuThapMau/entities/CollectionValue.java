@@ -21,9 +21,9 @@ public class CollectionValue {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "form_id")
-    private CollectionForm form_id;
+    private CollectionForm form;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "form_attribute_id")
-    private CollectionAttribute form_attribute_id;
+    private CollectionAttribute form_attribute;
 }

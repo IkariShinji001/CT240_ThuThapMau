@@ -12,6 +12,6 @@ public class CollectionAttribute {
     private String form_attribute_name;
     @ManyToOne
     @JoinColumn(name = "form_id", insertable = false, updatable = false)
-    private CollectionForm form_id;
+    private CollectionForm form;
 
 }
