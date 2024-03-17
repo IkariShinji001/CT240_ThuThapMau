@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import web.ThuThapMau.entities.compositeKeyId.CollectionAttributeId;
+import web.ThuThapMau.entities.CollectionForm;
 
 @Entity(name = "CollectionAttribute")
 public class CollectionAttribute {
@@ -13,6 +14,6 @@ public class CollectionAttribute {
     private String form_attribute_name;
     @ManyToOne
     @JoinColumn(name = "form_id", insertable = false, updatable = false)
-    private Form form;
+    private CollectionForm form;
 
 }

@@ -1,7 +1,7 @@
 package web.ThuThapMau.entities;
 
 import jakarta.persistence.*;
-
+import web.ThuThapMau.entities.Project;
 import java.util.Date;
 
 @Entity(name = "collection")
@@ -26,5 +26,6 @@ public class Collection {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
 
 }
