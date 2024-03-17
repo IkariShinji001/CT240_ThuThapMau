@@ -1,10 +1,12 @@
 package web.ThuThapMau.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -20,10 +22,5 @@ public class User {
     private String user_email;
     private String user_phone_number;
     private String user_password;
-
-    @OneToMany(mappedBy = "user")
-    private List<Project> projects;
-
-
 
 }
