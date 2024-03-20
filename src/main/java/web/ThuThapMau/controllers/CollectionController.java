@@ -32,7 +32,11 @@ public class CollectionController {
         Optional<Collection> collection = collectionService.getCollectionById(id);
         return ResponseEntity.status(201).body(collection);
     }
-
+    @PatchMapping("/{id}")
+    public ResponseEntity updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload){
+        collectionService.updateCollectionById(id, payload);
+        return ResponseEntity.status(200).body("Cập nhật thành công");
+    }
 
 
 }

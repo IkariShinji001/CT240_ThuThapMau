@@ -24,5 +24,15 @@ public class CollectionService {
         return collectionRepository.findById(collection_id);
     }
 
+    public void updateCollectionById(Long collectionId, Collection payload) {
+        String collectionName = payload != null ? payload.getCollection_name() : null;
+        String collectionDescription = payload != null ? payload.getCollection_description() : null;
+        String collectionImageUrl = payload != null ? payload.getCollection_image_url() : null;
+        Date collectionStart = payload != null ? payload.getCollection_start() : null;
+        Date collectionEnd = payload != null ? payload.getCollection_end() : null;
+
+        collectionRepository.updateCollectionById(collectionId, collectionName, collectionStart, collectionEnd, collectionImageUrl,collectionDescription);
+    }
+
 
 }
