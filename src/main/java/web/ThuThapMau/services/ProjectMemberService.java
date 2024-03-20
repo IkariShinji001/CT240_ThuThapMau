@@ -21,12 +21,10 @@ public class ProjectMemberService {
         projectMemberRepository.save(projectMember);
     }
 
-    public void updateMemberStatus(ProjectMember payload){
-        Long project_id = payload.getId().getProject().getProject_id();
-        Long user_id = payload.getId().getUser().getUser_id();
-        Long accept_status = (long) payload.getAccept_status();
-
-        System.out.println(project_id + " " + user_id + " " +  accept_status);
-        projectMemberRepository.updateMemberStatus(project_id, user_id, accept_status);
-    }
+        public void updateMemberStatus(ProjectMember payload){
+            Long project_id = payload.getId().getProject().getProject_id();
+            Long user_id = payload.getId().getUser().getUser_id();
+            Long accept_status = (long) payload.getAccept_status();
+            projectMemberRepository.updateMemberStatus(project_id, user_id, accept_status);
+        }
 }

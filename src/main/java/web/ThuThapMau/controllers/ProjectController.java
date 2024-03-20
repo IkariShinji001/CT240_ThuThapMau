@@ -34,6 +34,12 @@ public class ProjectController {
         return ResponseEntity.status(200).body(project);
     }
 
+    @PostMapping
+    public ResponseEntity<Project> createProject(Project newProject){
+        Project project = projectService.createProject(newProject);
+        return ResponseEntity.status(200).body(project);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
         projectService.updateProjectById(project_id, payload);
