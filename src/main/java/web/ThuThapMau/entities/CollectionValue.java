@@ -12,16 +12,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 public class CollectionValue {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long form_value_id;
-    private String form_value;
-    private Long form_submit_time;
+    private Long collection_value_id;
+    private String collection_value;
+    private Long submit_time;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "form_id", insertable = false, updatable = false)
-    @JoinColumn(name = "form_attribute_id", insertable = false, updatable = false)
-    private CollectionAttribute form_attribute;
+    @JoinColumn(name = "collection_attribute_id")
+    private CollectionAttribute collection_attribute;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "collection_form_id")
+    private CollectionForm collection_form;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
