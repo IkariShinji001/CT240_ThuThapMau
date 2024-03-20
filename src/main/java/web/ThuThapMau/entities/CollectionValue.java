@@ -20,7 +20,7 @@ public class CollectionValue {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "collection_attribute_id")
-    private CollectionAttribute form_attribute;
+    private CollectionAttribute collection_attribute;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "collection_form_id")
