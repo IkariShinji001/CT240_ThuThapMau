@@ -17,12 +17,14 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name) {
-        if(!project_name.isEmpty()){
-            List<Project> projects = projectService.getAllProjectByUserId(user_id, project_name);
-            return ResponseEntity.status(200).body(projects);
+    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+        List<Project> projects;
+        if (project_name != null && !project_name.isEmpty()) {
+            System.out.println(project_name);
+            projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
+        } else {
+            projects = projectService.getAllProjectByUserId(user_id, accept_status);
         }
-        List<Project> projects = projectService.getAllProjectByUserId(user_id);
         return ResponseEntity.status(200).body(projects);
     }
 
@@ -32,16 +34,16 @@ public class ProjectController {
         return ResponseEntity.status(200).body(project);
     }
 
+    @PostMapping
+    public ResponseEntity<Project> createProject(Project newProject){
+        Project project = projectService.createProject(newProject);
+        return ResponseEntity.status(200).body(project);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
         projectService.updateProjectById(project_id, payload);
         return ResponseEntity.status(200).body("Cập nhật thành công");
 
-    }
-
-    @PostMapping
-    public ResponseEntity<Project> createUser(@RequestBody Project newProject) {
-        Project project = projectService.createProject(newProject);
-        return ResponseEntity.status(201).body(project);
     }
 }

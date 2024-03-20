@@ -14,4 +14,8 @@ import web.ThuThapMau.entities.compositeKeyId.ProjectMemberId;
 public class ProjectMember {
     @EmbeddedId
     private ProjectMemberId id;
+    //0: Trưởng mời chưa chấp nhận
+    //1: Yêu cầu vào nhóm chưa được chấp nhân
+    //2: Trong dự án
+    private int accept_status;
 }

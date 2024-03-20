@@ -6,9 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
-@Entity(name = "collection")
+@Entity(name = "Collection")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,5 +32,4 @@ public class Collection {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
-
 }

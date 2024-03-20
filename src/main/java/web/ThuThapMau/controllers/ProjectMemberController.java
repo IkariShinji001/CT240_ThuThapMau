@@ -20,8 +20,14 @@ public class ProjectMemberController {
         return ResponseEntity.status(200).body(members);
     }
     @PostMapping
-    public ResponseEntity addMemberToProject(@RequestBody ProjectMember payload){
+    public ResponseEntity<String> addMemberToProject(@RequestBody ProjectMember payload){
         projectMemberService.addMemberToProject(payload);
+        return ResponseEntity.status(200).body("OK");
+    }
+
+    @PatchMapping
+    public ResponseEntity<String>  updateMemberStatus(@RequestBody ProjectMember payload){
+        projectMemberService.updateMemberStatus(payload);
         return ResponseEntity.status(200).body("OK");
     }
 }

@@ -14,17 +14,14 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public List<Project> getAllProjectByUserId(Long user_id){
-        return projectRepository.findAllByUserId(user_id);
+    public List<Project> getAllProjectByUserId(Long user_id, Long accept_status){
+        return projectRepository.findAllByUserId(user_id, accept_status);
     }
 
-    public List<Project> getAllProjectByUserId(Long user_id, String project_name){
-        return projectRepository.findAllProjectByUserIdAndName(user_id, project_name);
+    public List<Project> getAllProjectByUserIdAndName(Long user_id, String project_name,Long accept_status){
+        return projectRepository.findAllProjectByUserIdAndName(user_id, project_name, accept_status);
     }
 
-    public Optional<Project> getProjectById(Long project_id){
-        return projectRepository.findById(project_id);
-    }
 
     public void updateProjectById(Long project_id, Project payload){
         String projectName = payload != null ? payload.getProject_name() : null;
