@@ -34,7 +34,4 @@ public class Collection {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @OneToMany(mappedBy = "collection")
-    private List<CollectionForm> collection_forms ;
-
 }

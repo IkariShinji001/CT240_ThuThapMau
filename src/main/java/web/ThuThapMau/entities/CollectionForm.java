@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class CollectionForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long form_id;
+    private Long collection_form_id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "collection_id")

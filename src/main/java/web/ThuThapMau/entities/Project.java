@@ -25,7 +25,4 @@ public class Project {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "project")
-    private List<Collection> collections;
-
 }
