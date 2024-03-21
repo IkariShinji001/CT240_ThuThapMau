@@ -15,6 +15,7 @@ public class CollectionForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long collection_form_id;
+    String collection_form_name;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "collection_id")

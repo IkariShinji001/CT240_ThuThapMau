@@ -1,4 +1,4 @@
-package web.ThuThapMau.repositories.test;
+package web.ThuThapMau.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import web.ThuThapMau.entities.CollectionForm;
