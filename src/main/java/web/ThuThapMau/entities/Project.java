@@ -19,6 +19,7 @@ public class Project {
     private String project_name;
     private String project_status;
     private Date project_created_at;
+    private String project_image_url;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

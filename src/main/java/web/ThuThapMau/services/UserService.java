@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.ThuThapMau.Util.JwtTokenProvider;
+import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.UserRepository;
 
@@ -29,6 +30,9 @@ public class UserService {
         return user;
     }
 
+    public User createUser(User newUser){
+        return userRepository.save(newUser);
+    }
     public Optional<User> getUserById(Long id){
         return userRepository.findById(id);
     }
