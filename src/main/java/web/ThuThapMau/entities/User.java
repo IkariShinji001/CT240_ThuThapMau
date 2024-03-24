@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
@@ -22,6 +21,4 @@ public class User {
     private String user_email;
     private String user_phone_number;
     private String user_password;
-
-
 }

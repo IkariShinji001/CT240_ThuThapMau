@@ -1,24 +1,18 @@
-package web.ThuThapMau.entities;
+package web.ThuThapMau.dtos;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import web.ThuThapMau.entities.CollectionForm;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "CollectionAttribute")
-public class CollectionAttribute {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AttributeDto {
     private Long collection_attribute_id;
     private String collection_attribute_name;
-
-    @ManyToOne
-    @JoinColumn(name = "collection_form_id")
-    private CollectionForm collection_form;
-
+    private Long collection_form;
 }

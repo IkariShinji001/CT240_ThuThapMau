@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity(name = "Collection")
 @Data
@@ -26,6 +25,11 @@ public class Collection {
 
     private Date collection_created_at;
 
+    @PrePersist
+    protected void onCreate() {
+        this.collection_created_at = new Date();
+    }
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -33,8 +37,4 @@ public class Collection {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
-
-    @OneToMany(mappedBy = "collection")
-    private List<CollectionForm> collection_forms ;
-
 }

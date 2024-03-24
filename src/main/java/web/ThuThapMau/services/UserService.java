@@ -1,16 +1,17 @@
 package web.ThuThapMau.services;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import web.ThuThapMau.Util.JwtTokenProvider;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -27,32 +28,22 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id){
-        return userRepository.findById(id);
-    }
-
-    public void updateUser(Long id, User dataUser){
-        String userName = dataUser != null ? dataUser.getUser_full_name() : null;
-        String userEmail = dataUser != null ? dataUser.getUser_email() : null;
-        String userPhoneNumber = dataUser != null ? dataUser.getUser_phone_number() : null;
-        String userPassword = dataUser != null ? dataUser.getUser_password() : null;
-        userRepository.updateUserById(id, userName, userEmail, userPhoneNumber, userPassword);
-    }
-
-    public void deleteUser(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            userRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("User with ID " + id + " not found");
+    public boolean login(User user, HttpServletResponse response){
+        String userEmail = user.getUser_email();
+        String userPassword = user.getUser_password();
+        System.out.println(userEmail + userPassword);
+        User existedUser = userRepository.login(userEmail, userPassword);
+        System.out.println(existedUser);
+        if(existedUser != null){
+            String jwtToken = JwtTokenProvider.createJwt(existedUser);
+            Cookie cookie = new Cookie("jwtToken", jwtToken);
+            cookie.setMaxAge(7 * 24 * 60 * 60);
+            cookie.setPath("/"); // Set cookie path
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+            return true;
         }
+        return false;
     }
-
-    public User login(User user){
-        String userEmail = user != null ? user.getUser_email() :null;
-        String userPassword = user != null ? user.getUser_password() :null;
-        return userRepository.login(userEmail, userPassword);
-    }
-
 
 }
