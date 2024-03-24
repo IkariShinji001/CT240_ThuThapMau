@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.dtos.CollectionDTO;
 import web.ThuThapMau.entities.Collection;
 import web.ThuThapMau.services.CollectionService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +29,25 @@ public class CollectionController {
 
     @GetMapping
     public List<Collection> getAllCollection() {return collectionService.getAllCollection();
+    }
+
+    @GetMapping("/projects/{id}")
+    public ResponseEntity<List<CollectionDTO>> getCollectionsByProjectId(@PathVariable(name = "id") Long project_id){
+        List<Collection> data =  collectionService.getCollectionsByProjectId(project_id);
+        List<CollectionDTO> listCollection = new ArrayList<>();
+        data.forEach((collection -> {
+            System.out.println(collection);
+            CollectionDTO current = new CollectionDTO();
+            current.setCollection_id(collection.getCollection_id());
+            current.setCollection_name(collection.getCollection_name());
+            current.setCollection_description(collection.getCollection_description());
+            current.setCollection_end(collection.getCollection_end());
+            current.setCollection_start(collection.getCollection_start());
+            current.setCollection_image_url(collection.getCollection_image_url());
+            current.setCollection_created_at(collection.getCollection_created_at());
+            listCollection.add(current);
+        }));
+        return ResponseEntity.status(200).body(listCollection);
     }
 
     @PostMapping

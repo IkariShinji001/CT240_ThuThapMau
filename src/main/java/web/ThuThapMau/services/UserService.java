@@ -28,7 +28,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public boolean login(User user, HttpServletResponse response){
+    public User login(User user, HttpServletResponse response){
         String userEmail = user.getUser_email();
         String userPassword = user.getUser_password();
         System.out.println(userEmail + userPassword);
@@ -41,9 +41,9 @@ public class UserService {
             cookie.setPath("/"); // Set cookie path
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
-            return true;
+            return existedUser;
         }
-        return false;
+        return null;
     }
 
 }

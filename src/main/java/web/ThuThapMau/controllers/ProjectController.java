@@ -28,6 +28,12 @@ public class ProjectController {
         return ResponseEntity.status(200).body(projects);
     }
 
+    @GetMapping("/{project_id}/users/{user_id}")
+    public ResponseEntity<Boolean> checkOwnerProject(@PathVariable Long user_id, @PathVariable Long project_id){
+        Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
+        return ResponseEntity.status(200).body(isOwner);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Project>> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
         Optional<Project> project = projectService.getProjectByProjectId(project_id);
@@ -36,7 +42,6 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Project> createProject(@RequestBody Project newProject){
-        System.out.println(newProject);
         Project project = projectService.createProject(newProject);
         return ResponseEntity.status(200).body(project);
     }

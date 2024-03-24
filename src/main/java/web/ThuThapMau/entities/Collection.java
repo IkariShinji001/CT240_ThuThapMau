@@ -25,6 +25,7 @@ public class Collection {
 
     private Date collection_created_at;
 
+
     @PrePersist
     protected void onCreate() {
         this.collection_created_at = new Date();

@@ -1,13 +1,14 @@
 package web.ThuThapMau.services;
 
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import web.ThuThapMau.entities.Collection;
 import web.ThuThapMau.repositories.CollectionRepository;
-import  web.ThuThapMau.entities.Collection;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 @Service
 public class CollectionService {
 
@@ -22,6 +23,10 @@ public class CollectionService {
     }
     public Optional<Collection> getCollectionById(Long collection_id) {
         return collectionRepository.findById(collection_id);
+    }
+
+    public List<Collection> getCollectionsByProjectId(Long project_id){
+        return collectionRepository.findCollectionsByProjectId(project_id);
     }
 
     public void updateCollectionById(Long collectionId, Collection payload) {
