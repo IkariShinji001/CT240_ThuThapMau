@@ -45,8 +45,6 @@ public class CollectionController {
         }
     }
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Collection>> getCollectionById(@PathVariable Long id) {
         Optional<Collection> collection = collectionService.getCollectionById(id);
