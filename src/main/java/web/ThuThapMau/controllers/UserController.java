@@ -7,11 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.entities.Collection;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,14 +58,22 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> uploadData(@RequestPart("description") User user,
-                                              @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<User> uploadData(
+                                                 @RequestPart("user_full_name") String user_full_name,
+                                                 @RequestPart("user_email") String user_email,
+                                                 @RequestPart("user_phone_number") String user_phone_number,
+                                                 @RequestPart("user_password") String user_password,
+                                                 @RequestPart("file") MultipartFile file) {
         try {
             // Tải ảnh lên Cloudinary
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
             String secureUrl = (String) uploadResult.get("secure_url");
-            user.setUser_image_url(secureUrl);
-            User newUser = userService.createUser(user);
+            User newUser = new User();
+            newUser.setUser_full_name(user_full_name);
+            newUser.setUser_email(user_email);
+            newUser.setUser_phone_number(user_phone_number);
+            newUser.setUser_password(user_password);
+            newUser.setUser_image_url(secureUrl);
             return ResponseEntity.ok(newUser);
         } catch (IOException e) {
             e.printStackTrace();
