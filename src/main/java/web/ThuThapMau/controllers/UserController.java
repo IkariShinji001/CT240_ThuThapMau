@@ -21,9 +21,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Long> getUserId(@PathVariable Long id) {
-        System.out.println("User ID: + id " + id);
-        return ResponseEntity.status(201).body(id);
+    public ResponseEntity<User> getUserId(@PathVariable Long id) {
+        User user = userService.getUserById(id).orElse(new User());
+        return ResponseEntity.status(201).body(user);
     }
 
     @PostMapping
@@ -31,4 +31,34 @@ public class UserController {
         System.out.println("User: " + user);
         return userService.saveUser(user);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateUser(@PathVariable Long id, @RequestBody User dataUser){
+        userService.updateUser(id, dataUser);
+        return ResponseEntity.status(200).body("Cập nhật thành công");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.status(200).body("User with ID " + id + " has been deleted successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody User user) {
+        User existUser = userService.login(user);
+        if(existUser != null){
+            return ResponseEntity.status(200).body("Đăng nhập thành công");
+        } else {
+            return ResponseEntity.status(400).body("Đăng nhập thất bại");
+        }
+    }
+
+    @PostMapping("/forgotPassword")
+    public void forgotPassword(@RequestBody String userEmail) {
+        userService.forgotPassword(userEmail);
+    }
+
+
+
 }
