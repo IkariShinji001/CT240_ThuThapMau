@@ -54,11 +54,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/forgotPassword")
-    public void forgotPassword(@RequestBody String userEmail) {
-        userService.forgotPassword(userEmail);
-    }
-
 
 
 }
