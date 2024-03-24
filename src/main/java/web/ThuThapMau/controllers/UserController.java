@@ -20,16 +20,16 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserId(@PathVariable Long id) {
-        User user = userService.getUserById(id).orElse(new User());
-        return ResponseEntity.status(201).body(user);
-    }
-
     @PostMapping
     public User createUser(@RequestBody User user) {
         System.out.println("User: " + user);
         return userService.saveUser(user);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserId(@PathVariable Long id) {
+        User user = userService.getUserById(id).orElse(new User());
+        return ResponseEntity.status(201).body(user);
     }
 
     @PutMapping("/{id}")
@@ -43,17 +43,6 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.status(200).body("User with ID " + id + " has been deleted successfully");
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
-        User existUser = userService.login(user);
-        if(existUser != null){
-            return ResponseEntity.status(200).body("Đăng nhập thành công");
-        } else {
-            return ResponseEntity.status(400).body("Đăng nhập thất bại");
-        }
-    }
-
 
 
 }
