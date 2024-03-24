@@ -18,14 +18,12 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping()
-    public ResponseEntity<Boolean> login(@RequestBody User user, HttpServletResponse response){
-        Boolean isLogin = userService.login(user, response);
-
-        System.out.println(isLogin);
-        if(isLogin){
-            return ResponseEntity.status(200).body(isLogin);
+    public ResponseEntity<User> login(@RequestBody User user, HttpServletResponse response){
+        User existedUser = userService.login(user, response);
+        if(existedUser != null){
+            return ResponseEntity.status(200).body(existedUser);
         }else {
-            return ResponseEntity.status(400).body(isLogin);
+            return ResponseEntity.status(400).body(null);
         }
     }
 }
