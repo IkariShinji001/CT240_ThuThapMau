@@ -24,7 +24,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 // Lấy id user từ chuỗi jwt
                 Claims claims = tokenProvider.getUserFromJWT(jwt);
-                System.out.println(claims);
+                request.setAttribute("claims", claims);
                 if (claims != null) {
                     return true;
                 }
