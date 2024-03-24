@@ -22,7 +22,5 @@ public class ProjectMemberId implements Serializable {
     @JoinColumn(name ="project_id")
     private  Project project;
 
-    public ProjectMemberId(ProjectMemberId projectMember) {
-    }
 }
 

@@ -22,7 +22,7 @@ public class CollectionFormController {
     @Autowired
     private CollectionFormService collectionFormService;
 
-        @GetMapping("/api/v1/collection-form")
+        @GetMapping("/api/v1/collection-forms")
         public ResponseEntity<List<CollectionForm>> getCollectionForm(){
             List<CollectionForm> collectionForms = collectionFormService.getAllForm();
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(collectionForms);
