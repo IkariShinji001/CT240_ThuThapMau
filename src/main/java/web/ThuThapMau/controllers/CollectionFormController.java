@@ -22,6 +22,7 @@ public class CollectionFormController {
     @Autowired
     private CollectionFormService collectionFormService;
 
+
         @GetMapping("/api/v1/collection-form")
         public ResponseEntity<List<CollectionForm>> getCollectionForm(){
             List<CollectionForm> collectionForms = collectionFormService.getAllForm();
@@ -37,5 +38,16 @@ public class CollectionFormController {
             CollectionForm collectionForm = collectionFormService.createCollectionForm(user_id, collection_id,
                                                name, collectionAttributes);
             return ResponseEntity.ok(collectionForm);
+        }
+        @PatchMapping ("/api/v1/collection-forms/{id}")
+        public ResponseEntity<CollectionForm> updateCollectionForm(@PathVariable(name = "id") Long collection_form_id, @RequestBody  CollectionFormDto collectionFormDto){
+            String name =  collectionFormDto.getName();
+            Long user_id = collectionFormDto.getUser_id();
+            Long collection_id = collectionFormDto.getCollection_id();
+            List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();
+            CollectionForm collectionForm = collectionFormService.updateCollectionForm(collection_form_id, user_id, collection_id,
+                    name, collectionAttributes);
+            return ResponseEntity.ok(collectionForm);
+
         }
 }
