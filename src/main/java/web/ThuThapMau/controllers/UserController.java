@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -31,16 +30,5 @@ public class UserController {
     public User createUser(@RequestBody User user) {
         System.out.println("User: " + user);
         return userService.saveUser(user);
-    }
-    @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody User user, HttpServletResponse response){
-        Boolean isLogin = userService.login(user, response);
-
-        System.out.println(isLogin);
-        if(isLogin){
-            return ResponseEntity.status(200).body(isLogin);
-        }else {
-            return ResponseEntity.status(400).body(isLogin);
-        }
     }
 }
