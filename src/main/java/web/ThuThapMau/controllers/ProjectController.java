@@ -7,9 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import web.ThuThapMau.entities.Collection;
 import web.ThuThapMau.entities.Project;
-import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.ProjectService;
 
 import java.io.IOException;
@@ -41,20 +39,22 @@ public class ProjectController {
         return ResponseEntity.status(200).body(projects);
     }
 
+    @GetMapping("/{project_id}/users/{user_id)")
+    public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id){
+        Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
+        return ResponseEntity.status(200).body(isOwner);
+    }
+
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Project>> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
         Optional<Project> project = projectService.getProjectByProjectId(project_id);
         return ResponseEntity.status(200).body(project);
     }
 
-//    @PostMapping
-//    public ResponseEntity<Project> createProject(@RequestBody Project newProject){
-//        System.out.println(newProject);
-//        Project project = projectService.createProject(newProject);
-//        return ResponseEntity.status(200).body(project);
-//    }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
         projectService.updateProjectById(project_id, payload);
         return ResponseEntity.status(200).body("Cập nhật thành công");
