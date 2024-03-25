@@ -7,16 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.dtos.ProjectDto;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.services.ProjectService;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/projects")
@@ -28,18 +26,27 @@ public class ProjectController {
     private Cloudinary cloudinary;
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+    public ResponseEntity<List<ProjectDto>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         List<Project> projects;
+        List<ProjectDto> projectDtos = new ArrayList<>();
         if (project_name != null && !project_name.isEmpty()) {
             System.out.println(project_name);
             projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
         } else {
             projects = projectService.getAllProjectByUserId(user_id, accept_status);
         }
-        return ResponseEntity.status(200).body(projects);
+        for (Project project : projects) {
+            ProjectDto projectDto1 = new ProjectDto();
+            projectDto1.setProject_id(project.getProject_id());
+            projectDto1.setProject_name(project.getProject_name());
+            projectDto1.setProject_created_at(project.getProject_created_at());
+            projectDto1.setUser_id(project.getUser().getUser_id());
+            projectDtos.add(projectDto1);
+        }
+        return ResponseEntity.status(200).body(projectDtos);
     }
 
-    @GetMapping("/{project_id}/users/{user_id)")
+    @GetMapping("/{project_id}/users/{user_id}")
     public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id){
         Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
         return ResponseEntity.status(200).body(isOwner);
