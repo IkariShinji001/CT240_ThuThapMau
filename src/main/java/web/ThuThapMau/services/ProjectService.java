@@ -6,7 +6,6 @@ import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.repositories.ProjectRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -39,8 +38,8 @@ public class ProjectService {
     }
 
 
-    public Optional<Project> getProjectByProjectId(Long project_id){
-        return projectRepository.findById(project_id);
+    public Project getProjectByProjectId(Long project_id){
+        return projectRepository.findProjectById(project_id);
     }
 
 

@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1/projects")
 public class ProjectController {
 
@@ -52,20 +53,22 @@ public class ProjectController {
         return ResponseEntity.status(200).body(isOwner);
     }
 
-
-
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Project>> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
-        Optional<Project> project = projectService.getProjectByProjectId(project_id);
+    public ResponseEntity<Project> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
+        Project project = projectService.getProjectByProjectId(project_id);
         return ResponseEntity.status(200).body(project);
     }
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
+    public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
         projectService.updateProjectById(project_id, payload);
         return ResponseEntity.status(200).body("Cập nhật thành công");
+    }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> options() {
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping

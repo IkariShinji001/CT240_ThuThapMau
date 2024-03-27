@@ -15,11 +15,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p JOIN ProjectMember pm ON p.project_id = pm.id.project.project_id WHERE p.user.user_id = :user_id AND pm.accept_status = :accept_status AND p.project_name LIKE  %:project_name%")
     List<Project> findAllProjectByUserIdAndName(Long user_id, String project_name, Long accept_status);
-    @Modifying  // Optional for UPDATE queries
+    @Modifying
     @Transactional
     @Query("UPDATE Project p SET p.project_name = :project_name, p.project_status = :project_status WHERE p.project_id = :project_id")
     void updateProjectById(Long project_id, String project_name, String project_status);
 
     @Query("SELECT p FROM Project p WHERE p.project_id =:project_id AND p.user.user_id =:user_id")
     Project checkOwnerProject(Long user_id, Long project_id);
+
+    @Query("SELECT p FROM Project p WHERE p.project_id = :project_id")
+    Project findProjectById(Long project_id);
 }

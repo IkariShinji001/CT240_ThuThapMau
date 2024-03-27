@@ -29,11 +29,14 @@ public class JwtInterceptor implements HandlerInterceptor {
                     return true;
                 }
             }else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                return false;
             }
         } catch (Exception ex) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return false;
+        }
+
+        if (!request.getMethod().equalsIgnoreCase("OPTIONS")) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
         return false;
     }

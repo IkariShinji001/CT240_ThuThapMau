@@ -32,6 +32,12 @@ public class CollectionController {
     public List<Collection> getAllCollection() {return collectionService.getAllCollection();
     }
 
+    @GetMapping("/projects/{project_id}")
+    public ResponseEntity<List<Collection>> getCollectionsByProjectId(@PathVariable Long project_id){
+        List<Collection> collections = collectionService.getCollectionsByProjectId(project_id);
+        System.out.println(collections);
+        return ResponseEntity.status(200).body(collections);
+    }
     @PostMapping
     public ResponseEntity<Collection> uploadData(@RequestParam("collection_name") String collection_name,
                                                  @RequestPart("collection_start") String collection_start,
