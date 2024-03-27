@@ -1,10 +1,13 @@
 package web.ThuThapMau.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.repositories.ProjectRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,8 +37,24 @@ public class ProjectService {
         projectRepository.updateProjectById(project_id, projectName, projectStatus);
     }
 
-    public Project createProject(Project newProject){
-        return projectRepository.save(newProject);
+    public Project createProject(Project newProject) {
+        validateProjectFields(newProject);  // Add validation before saving
+
+        try {
+            newProject.setProject_created_at(new Date());  // Set creation date
+            return projectRepository.save(newProject);
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating project: " + e.getMessage());
+        }
+    }
+
+    private void validateProjectFields(Project project) {
+        if (project.getProject_name() == null || project.getProject_name().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project name cannot be empty");
+        }
+        if (project.getProject_status() == null || project.getProject_status().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project status cannot be empty");
+        }
     }
 
 

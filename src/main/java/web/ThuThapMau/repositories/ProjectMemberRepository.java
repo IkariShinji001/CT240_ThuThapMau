@@ -18,4 +18,7 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Pr
     @Transactional
     @Query("UPDATE ProjectMember pm SET pm.accept_status = :accept_status WHERE pm.id.project.project_id = :project_id AND pm.id.user.user_id = :user_id")
     void updateMemberStatus(Long project_id,Long user_id,Long accept_status);
+
+//    @Query("SELECT pm FROM ProjectMember pm WHERE pm.id.project.project_id = :project_id")
+//    int (Long project_id);
 }

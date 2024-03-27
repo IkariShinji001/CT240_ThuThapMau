@@ -17,6 +17,8 @@ public class Project {
     private Long project_id;
 
     private String project_name;
+//   trạng thái 1. set default là đang hoạt động khi được tạo
+//   trạng thái 2. là dự án đã kết thúc
     private String project_status;
     private Date project_created_at;
     private String project_image_url;

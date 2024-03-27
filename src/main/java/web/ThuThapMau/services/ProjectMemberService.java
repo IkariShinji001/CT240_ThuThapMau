@@ -18,7 +18,7 @@ public class ProjectMemberService {
         return projectMemberRepository.getMembersByProjectId(project_id);
     }
 
-    public void addMemberToProject(ProjectMember projectMember) {
+    public void addMemberToProject(Long user_id, ProjectMember projectMember) {
         projectMemberRepository.save(projectMember);
     }
 

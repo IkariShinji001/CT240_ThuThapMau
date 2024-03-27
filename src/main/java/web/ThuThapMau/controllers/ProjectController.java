@@ -52,8 +52,6 @@ public class ProjectController {
         return ResponseEntity.status(200).body(isOwner);
     }
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Project>> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
         Optional<Project> project = projectService.getProjectByProjectId(project_id);

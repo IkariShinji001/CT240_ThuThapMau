@@ -1,5 +1,7 @@
 package web.ThuThapMau.controllers;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,8 +23,14 @@ public class ProjectMemberController {
         return ResponseEntity.status(200).body(members);
     }
     @PostMapping
-    public ResponseEntity<String> addMemberToProject(@RequestBody ProjectMember payload){
-        projectMemberService.addMemberToProject(payload);
+    public ResponseEntity<String> addMemberToProject(HttpServletRequest request, @RequestBody ProjectMember payload) {
+        Claims claims = (Claims) request.getAttribute("claims");
+        Long user_id = null;
+        if (claims != null) {
+            user_id = Long.valueOf(claims.getSubject());
+            System.out.println("user_id" + user_id);
+        }
+        projectMemberService.addMemberToProject(user_id, payload);
         return ResponseEntity.status(200).body("OK");
     }
 
