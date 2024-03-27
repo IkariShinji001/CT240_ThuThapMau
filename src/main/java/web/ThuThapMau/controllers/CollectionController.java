@@ -39,7 +39,7 @@ public class CollectionController {
         return ResponseEntity.status(200).body(collections);
     }
     @PostMapping
-    public ResponseEntity<Collection> uploadData(@RequestParam("collection_name") String collection_name,
+    public ResponseEntity<Collection> createCollection(@RequestParam("collection_name") String collection_name,
                                                  @RequestPart("collection_start") String collection_start,
                                                  @RequestPart("collection_end") String collection_end,
                                                  @RequestPart("collection_description") String collection_description,

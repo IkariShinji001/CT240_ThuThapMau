@@ -72,7 +72,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Project> uploadData(
+    public ResponseEntity<Project> createProject(
             @RequestPart("project_name") String project_name,
             @RequestPart("project_status") String project_status,
             @RequestPart("project_created_at") String project_created_at,

@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> uploadData(
+    public ResponseEntity<User> CreateUser(
                                                  @RequestPart("user_full_name") String user_full_name,
                                                  @RequestPart("user_email") String user_email,
                                                  @RequestPart("user_phone_number") String user_phone_number,
