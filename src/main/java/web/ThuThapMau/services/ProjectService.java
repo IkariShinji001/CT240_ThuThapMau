@@ -14,6 +14,10 @@ public class ProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
+    public List<Project> getAllPersonalProject(Long userId) {
+        return projectRepository.findAllPersonalProjectByUserId(userId);
+    }
+
     public List<Project> getAllProjectByUserId(Long user_id, Long accept_status){
         return projectRepository.findAllByUserId(user_id, accept_status);
     }

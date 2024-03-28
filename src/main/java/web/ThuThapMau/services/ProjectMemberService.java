@@ -18,8 +18,8 @@ public class ProjectMemberService {
         return projectMemberRepository.getMembersByProjectId(project_id);
     }
 
-    public void addMemberToProject(ProjectMember projectMember) {
-        projectMemberRepository.save(projectMember);
+    public void addMemberToProject(ProjectMember payload) {
+        projectMemberRepository.save(payload);
     }
 
     public void updateMemberStatus(ProjectMemberRequestDto payload) {
