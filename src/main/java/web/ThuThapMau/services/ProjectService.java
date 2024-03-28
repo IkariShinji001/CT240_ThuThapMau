@@ -42,6 +42,11 @@ public class ProjectService {
         return projectRepository.findProjectById(project_id);
     }
 
+    public List<Project> getAllProjectWithUserInfoByProjectId(Long user_id, int accept_status){
+        return projectRepository.getAllProjectWithUserInfoByProjectId(user_id, accept_status);
+
+    }
+
 
 
 }
