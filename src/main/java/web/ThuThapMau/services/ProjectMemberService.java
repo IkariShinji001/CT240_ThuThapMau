@@ -3,24 +3,46 @@ package web.ThuThapMau.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.ThuThapMau.dtos.ProjectMemberRequestDto;
+import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.ProjectMember;
+import web.ThuThapMau.entities.User;
+import web.ThuThapMau.entities.compositeKeyId.ProjectMemberId;
 import web.ThuThapMau.repositories.ProjectMemberRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectMemberService {
 
     @Autowired
     ProjectMemberRepository projectMemberRepository;
-
-    public List<ProjectMember> getMemberByProjectId(Long project_id) {
-        return projectMemberRepository.getMembersByProjectId(project_id);
+    @Autowired
+    ProjectService projectService;
+    @Autowired
+    UserService userService;
+    public List<ProjectMember> getMemberByProjectId(Long project_id, Integer accept_status) {
+        return projectMemberRepository.getMembersByProjectId(project_id, accept_status);
     }
 
-    public void addMemberToProject(ProjectMember payload) {
-        projectMemberRepository.save(payload);
+    public void removeMemberFromProject(Long project_id, Long user_id){
+        projectMemberRepository.removeMemberFromProject(project_id, user_id);
     }
+
+    public void addMemberToProject(Long project_id, List<Long> user_ids) {
+        Project project = projectService.getProjectByProjectId(project_id);
+        user_ids.forEach((user_id) -> {
+            ProjectMemberId id = new ProjectMemberId();
+            Optional<User> user = userService.getUserById(user_id);
+            id.setProject(project);
+            id.setUser(user.get());
+            ProjectMember newProjectMember = new ProjectMember();
+            newProjectMember.setId(id);
+            newProjectMember.setAccept_status(0);
+            projectMemberRepository.save(newProjectMember);
+        });
+    }
+
 
     public void updateMemberStatus(ProjectMemberRequestDto payload) {
         Long project_id = payload.getProject_id();

@@ -1,27 +1,27 @@
 package web.ThuThapMau.repositories;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import web.ThuThapMau.entities.ProjectMember;
 import web.ThuThapMau.entities.compositeKeyId.ProjectMemberId;
 
 import java.util.List;
 
-@Repository
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, ProjectMemberId> {
-
     // Custom methods if needed
-    @Query("SELECT pm FROM ProjectMember pm WHERE pm.id.project.project_id = :project_id")
-    List<ProjectMember> getMembersByProjectId(Long project_id);
+    @Query("SELECT pm FROM ProjectMember pm WHERE pm.id.project.project_id = :project_id AND pm.accept_status = :accept_status")
+    List<ProjectMember> getMembersByProjectId(Long project_id, Integer accept_status);
 
     @Modifying
     @Transactional
     @Query("UPDATE ProjectMember pm SET pm.accept_status = :accept_status WHERE pm.id.project.project_id = :project_id AND pm.id.user.user_id = :user_id")
-    void updateMemberStatus(Long project_id,Long user_id,Long accept_status);
+    void updateMemberStatus(Long project_id, Long user_id, Long accept_status);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE ProjectMember pm WHERE pm.id.project.project_id = :project_id AND pm.id.user.user_id = :user_id")
+    void removeMemberFromProject(Long project_id, Long user_id);
 
 }

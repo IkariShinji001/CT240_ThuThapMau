@@ -1,6 +1,5 @@
 package web.ThuThapMau.repositories;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updateUserById(Long id, String userName, String userEmail, String userPhoneNumber, String userPassWord);
 
 
+    @Query("SELECT u FROM users u WHERE u.user_email = :user_mail")
+    User findByUserEmail(String user_mail);
 }

@@ -20,7 +20,8 @@ public class ProjectMemberId implements Serializable {
 
     @ManyToOne
     @JoinColumn(name ="project_id")
-    private  Project project;
+    private Project project;
+
 
 }
 

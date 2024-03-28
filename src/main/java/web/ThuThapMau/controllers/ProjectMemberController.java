@@ -16,13 +16,19 @@ public class ProjectMemberController {
     @Autowired
     ProjectMemberService projectMemberService;
     @GetMapping("/projects/{id}")
-    public ResponseEntity<List<ProjectMember>> getMemberByProjectId(@PathVariable(name = "id") Long project_id){
-        List<ProjectMember> members = projectMemberService.getMemberByProjectId(project_id);
+    public ResponseEntity<List<ProjectMember>> getMemberByProjectId(@PathVariable(name = "id") Long project_id, @RequestParam Integer accept_status){
+        List<ProjectMember> members = projectMemberService.getMemberByProjectId(project_id, accept_status);
         return ResponseEntity.status(200).body(members);
     }
-    @PostMapping
-    public ResponseEntity<String> addMemberToProject(@RequestBody ProjectMember payload){
-        projectMemberService.addMemberToProject(payload);
+    @PostMapping("/projects/{project_id}")
+    public ResponseEntity<String> addMemberToProject(@PathVariable Long project_id, @RequestBody List<Long> user_ids){
+        projectMemberService.addMemberToProject(project_id, user_ids);
+        return ResponseEntity.status(200).body("OK");
+    }
+
+    @DeleteMapping("/projects/{project_id}/users/{user_id}")
+    public ResponseEntity<String> removeMemberFromProject(@PathVariable Long project_id, @PathVariable Long user_id){
+        projectMemberService.removeMemberFromProject(project_id, user_id);
         return ResponseEntity.status(200).body("OK");
     }
 

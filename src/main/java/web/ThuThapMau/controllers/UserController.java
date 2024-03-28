@@ -7,15 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import web.ThuThapMau.entities.Collection;
-import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,20 +28,24 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-//    @PostMapping
-//    public User createUser(@RequestBody User user) {
-//        System.out.println("User: " + user);
-//        return userService.saveUser(user);
-//    }
-
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserId(@PathVariable Long id) {
         User user = userService.getUserById(id).orElse(new User());
         return ResponseEntity.status(201).body(user);
     }
 
+    @GetMapping("/emails/{user_mail}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String user_mail){
+        System.out.println(user_mail);
+        User user = userService.getUserByEmail(user_mail);
+        if(user != null){
+            return ResponseEntity.status(200).body(user);
+        }
+        return ResponseEntity.status(400).body(null);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity updateUser(@PathVariable Long id, @RequestBody User dataUser){
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User dataUser){
         userService.updateUser(id, dataUser);
         return ResponseEntity.status(200).body("Cập nhật thành công");
     }
@@ -58,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> uploadData(
+    public ResponseEntity<User> CreateUser(
                                                  @RequestPart("user_full_name") String user_full_name,
                                                  @RequestPart("user_email") String user_email,
                                                  @RequestPart("user_phone_number") String user_phone_number,
