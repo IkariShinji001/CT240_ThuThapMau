@@ -36,14 +36,6 @@ public class ProjectController {
         } else {
             projects = projectService.getAllProjectByUserId(user_id, accept_status);
         }
-        for (Project project : projects) {
-            ProjectDto projectDto1 = new ProjectDto();
-            projectDto1.setProject_id(project.getProject_id());
-            projectDto1.setProject_name(project.getProject_name());
-            projectDto1.setProject_created_at(project.getProject_created_at());
-            projectDto1.setUser_id(project.getUser().getUser_id());
-            projectDtos.add(projectDto1);
-        }
         return ResponseEntity.status(200).body(projectDtos);
     }
 
@@ -59,6 +51,11 @@ public class ProjectController {
         return ResponseEntity.status(200).body(project);
     }
 
+    @GetMapping("/users/{user_id}/info")
+    public ResponseEntity<List<Project>> getAllProjectWithUserInfoByProjectId(@PathVariable Long user_id, @RequestParam int accept_status){
+        List<Project> projectList = projectService.getAllProjectWithUserInfoByProjectId(user_id, accept_status);
+        return ResponseEntity.status(200).body(projectList);
+    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
