@@ -34,6 +34,14 @@ public class ProjectController {
         return ResponseEntity.status(200).body(projects);
     }
 
+    @GetMapping("/users/noti/{id}")
+    public ResponseEntity<List<Project>> getAllNotificationsByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name,@RequestParam Long accept_status ){
+        List<Project> projects;
+        projects = projectService.getAllNotificationsByUserId(user_id, accept_status);
+
+        return  ResponseEntity.status(200).body(projects);
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         List<Project> projects;
@@ -77,27 +85,7 @@ public class ProjectController {
             @RequestPart("project_created_at") String project_created_at,
             @RequestPart("file") MultipartFile file,
             @RequestPart("user_id") String user_id) {
-        try {
-            // Tải ảnh lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String secureUrl = (String) uploadResult.get("secure_url");
-            Project newProject = new Project();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date create = dateFormat.parse(project_created_at);
-
-            newProject.setProject_name(project_name);
-            newProject.setProject_status(project_status);
-            newProject.setProject_image_url(secureUrl);
-            newProject.setProject_created_at(create);
-
-            Project createdProject = projectService.createProject(newProject, Long.parseLong(user_id));
-            System.out.println(createdProject + "adsfasdfas");
-            return ResponseEntity.status(201).body(createdProject);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+       Project project = projectService.createProject(project_name, project_status, project_created_at, file, user_id);
+       return  ResponseEntity.status(200).body(project);
     }
 }
