@@ -10,7 +10,7 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Modifying
     @Transactional
-    @Query("SELECT p FROM Project p JOIN ProjectMember pm ON p.project_id = pm.id.project.project_id WHERE p.user.user_id = :user_id AND pm.accept_status = :accept_status")
+    @Query("SELECT p FROM Project p JOIN ProjectMember pm ON p.project_id = pm.id.project.project_id WHERE pm.id.user.user_id = :user_id AND pm.accept_status = :accept_status")
     List<Project> findAllByUserId(Long user_id, Long accept_status );
 
     @Modifying
@@ -29,4 +29,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p WHERE p.project_id = :project_id")
     Project findProjectById(Long project_id);
+
+    @Query("SELECT p FROM Project p WHERE p.user.user_id =:userId")
+    List<Project> findAllPersonalProjectByUserId(Long userId);
 }

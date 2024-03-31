@@ -26,6 +26,14 @@ public class ProjectController {
     @Autowired
     private Cloudinary cloudinary;
 
+    @GetMapping("/personal/users/{id}")
+    public ResponseEntity<List<Project>> getAllPersonalProjectByUserId(@PathVariable(name = "id") Long user_id) {
+        List<Project> projects;
+        projects = projectService.getAllPersonalProject(user_id);
+
+        return ResponseEntity.status(200).body(projects);
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         List<Project> projects;
@@ -38,16 +46,8 @@ public class ProjectController {
         return ResponseEntity.status(200).body(projects);
     }
 
-    @GetMapping("/users/noti/{id}")
-    public ResponseEntity<List<Project>> getAllNotificationsByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name,@RequestParam Long accept_status ){
-        List<Project> projects;
-        projects = projectService.getAllNotificationsByUserId(user_id, accept_status);
-
-        return  ResponseEntity.status(200).body(projects);
-    }
-
     @GetMapping("/{project_id}/users/{user_id}")
-    public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id){
+    public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id) {
         Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
         return ResponseEntity.status(200).body(isOwner);
     }
@@ -60,7 +60,7 @@ public class ProjectController {
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
+    public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload) {
         projectService.updateProjectById(project_id, payload);
         return ResponseEntity.status(200).body("Cập nhật thành công");
     }
@@ -75,7 +75,8 @@ public class ProjectController {
             @RequestPart("project_name") String project_name,
             @RequestPart("project_status") String project_status,
             @RequestPart("project_created_at") String project_created_at,
-            @RequestPart("file") MultipartFile file) {
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("user_id") String user_id) {
         try {
             // Tải ảnh lên Cloudinary
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
@@ -89,8 +90,9 @@ public class ProjectController {
             newProject.setProject_image_url(secureUrl);
             newProject.setProject_created_at(create);
 
-
-            return ResponseEntity.ok(newProject);
+            Project createdProject = projectService.createProject(newProject, Long.parseLong(user_id));
+            System.out.println(createdProject + "adsfasdfas");
+            return ResponseEntity.status(201).body(createdProject);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
