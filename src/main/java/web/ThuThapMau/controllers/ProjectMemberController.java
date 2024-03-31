@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.Yaml;
 import web.ThuThapMau.dtos.ProjectMemberRequestDto;
 import web.ThuThapMau.entities.ProjectMember;
 import web.ThuThapMau.services.ProjectMemberService;
@@ -33,7 +34,7 @@ public class ProjectMemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<String>  updateMemberStatus(@RequestBody ProjectMemberRequestDto payload){
+    public ResponseEntity<String> updateMemberStatus(@RequestBody ProjectMemberRequestDto payload){
         projectMemberService.updateMemberStatus(payload);
         return ResponseEntity.status(200).body("OK");
     }

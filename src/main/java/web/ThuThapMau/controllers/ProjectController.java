@@ -27,16 +27,23 @@ public class ProjectController {
     private Cloudinary cloudinary;
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<List<ProjectDto>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         List<Project> projects;
-        List<ProjectDto> projectDtos = new ArrayList<>();
         if (project_name != null && !project_name.isEmpty()) {
             System.out.println(project_name);
             projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
         } else {
             projects = projectService.getAllProjectByUserId(user_id, accept_status);
         }
-        return ResponseEntity.status(200).body(projectDtos);
+        return ResponseEntity.status(200).body(projects);
+    }
+
+    @GetMapping("/users/noti/{id}")
+    public ResponseEntity<List<Project>> getAllNotificationsByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name,@RequestParam Long accept_status ){
+        List<Project> projects;
+        projects = projectService.getAllNotificationsByUserId(user_id, accept_status);
+
+        return  ResponseEntity.status(200).body(projects);
     }
 
     @GetMapping("/{project_id}/users/{user_id}")
@@ -51,11 +58,6 @@ public class ProjectController {
         return ResponseEntity.status(200).body(project);
     }
 
-    @GetMapping("/users/{user_id}/info")
-    public ResponseEntity<List<Project>> getAllProjectWithUserInfoByProjectId(@PathVariable Long user_id, @RequestParam int accept_status){
-        List<Project> projectList = projectService.getAllProjectWithUserInfoByProjectId(user_id, accept_status);
-        return ResponseEntity.status(200).body(projectList);
-    }
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
