@@ -26,16 +26,12 @@ public class ProjectController {
     @Autowired
     private Cloudinary cloudinary;
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<List<ProjectDto>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+    @GetMapping("/personal/users/{id}")
+    public ResponseEntity<List<ProjectDto>> getAllPersonalProject(@PathVariable(name = "id") Long user_id) {
         List<Project> projects;
         List<ProjectDto> projectDtos = new ArrayList<>();
-        if (project_name != null && !project_name.isEmpty()) {
-            System.out.println(project_name);
-            projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
-        } else {
-            projects = projectService.getAllProjectByUserId(user_id, accept_status);
-        }
+        projects = projectService.getAllPersonalProject(user_id);
+
         for (Project project : projects) {
             ProjectDto projectDto1 = new ProjectDto();
             projectDto1.setProject_id(project.getProject_id());
@@ -47,11 +43,32 @@ public class ProjectController {
         return ResponseEntity.status(200).body(projectDtos);
     }
 
+    @GetMapping("/users/{id}")
+    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+        List<Project> projects;
+//        List<ProjectDto> projectDtos = new ArrayList<>();
+        if (project_name != null && !project_name.isEmpty()) {
+            projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
+        } else {
+            projects = projectService.getAllProjectByUserId(user_id, accept_status);
+        }
+//        for (Project project : projects) {
+//            ProjectDto projectDto1 = new ProjectDto();
+//            projectDto1.setProject_id(project.getProject_id());
+//            projectDto1.setProject_name(project.getProject_name());
+//            projectDto1.setProject_created_at(project.getProject_created_at());
+//            projectDto1.setUser_id(project.getUser().getUser_id());
+//            projectDtos.add(projectDto1);
+//        }
+        return ResponseEntity.status(200).body(projects);
+    }
+
     @GetMapping("/{project_id}/users/{user_id}")
-    public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id){
+    public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id) {
         Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
         return ResponseEntity.status(200).body(isOwner);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
@@ -66,17 +83,13 @@ public class ProjectController {
         return ResponseEntity.status(200).body("Cập nhật thành công");
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> options() {
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping
     public ResponseEntity<Project> createProject(
             @RequestPart("project_name") String project_name,
             @RequestPart("project_status") String project_status,
             @RequestPart("project_created_at") String project_created_at,
-            @RequestPart("file") MultipartFile file) {
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("user_id") String user_id) {
         try {
             // Tải ảnh lên Cloudinary
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
@@ -89,9 +102,8 @@ public class ProjectController {
             newProject.setProject_status(project_status);
             newProject.setProject_image_url(secureUrl);
             newProject.setProject_created_at(create);
-
-
-            return ResponseEntity.ok(newProject);
+            Project project1 = projectService.createProject(newProject, Long.parseLong(user_id));
+            return ResponseEntity.ok(project1);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

@@ -3,7 +3,9 @@ package web.ThuThapMau.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.ThuThapMau.entities.Project;
+import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.ProjectRepository;
+import web.ThuThapMau.repositories.UserRepository;
 
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class ProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Project> getAllPersonalProject(Long userId) {
         return projectRepository.findAllPersonalProjectByUserId(userId);
@@ -37,7 +42,9 @@ public class ProjectService {
         projectRepository.updateProjectById(project_id, projectName, projectStatus);
     }
 
-    public Project createProject(Project newProject){
+    public Project createProject(Project newProject, Long user_id){
+        User tmpUser = userRepository.findById(user_id).orElse(new User());
+        newProject.setUser(tmpUser);
         return projectRepository.save(newProject);
     }
 
