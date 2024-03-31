@@ -50,6 +50,7 @@ public class ProjectMemberService {
         Long project_id = payload.getProject_id();
         Long user_id = payload.getUser_id();
         Long accept_status = payload.getAccept_status();
+        System.out.println(project_id + " " + user_id + " " + accept_status);
         projectMemberRepository.updateMemberStatus(project_id, user_id, accept_status);
     }
 

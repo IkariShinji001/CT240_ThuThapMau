@@ -6,6 +6,7 @@ import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.ProjectRepository;
 import web.ThuThapMau.repositories.UserRepository;
+import web.ThuThapMau.repositories.UserRepository;
 
 import java.util.List;
 
@@ -25,7 +26,9 @@ public class ProjectService {
     public List<Project> getAllProjectByUserId(Long user_id, Long accept_status){
         return projectRepository.findAllByUserId(user_id, accept_status);
     }
-
+    public  List<Project> getAllNotificationsByUserId(Long user_id, Long accept_status){
+        return  projectRepository.findAllNotiByUserId(user_id, accept_status);
+    }
     public List<Project> getAllProjectByUserIdAndName(Long user_id, String project_name,Long accept_status){
         return projectRepository.findAllProjectByUserIdAndName(user_id, project_name, accept_status);
     }

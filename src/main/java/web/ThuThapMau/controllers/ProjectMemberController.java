@@ -39,7 +39,7 @@ public class ProjectMemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<String>  updateMemberStatus(@RequestBody ProjectMemberRequestDto payload){
+    public ResponseEntity<String> updateMemberStatus(@RequestBody ProjectMemberRequestDto payload){
         projectMemberService.updateMemberStatus(payload);
         return ResponseEntity.status(200).body("OK");
     }
