@@ -26,6 +26,12 @@ public class ProjectMemberController {
         return ResponseEntity.status(200).body("OK");
     }
 
+    @PostMapping("/owner-projects/{project_id}")
+    public ResponseEntity<String> addOwnerToProjectMember(@PathVariable Long project_id, @RequestBody Long user_id){
+        projectMemberService.addOwnerToProjectMember(project_id, user_id);
+        return ResponseEntity.status(200).body("OK");
+    }
+
     @DeleteMapping("/projects/{project_id}/users/{user_id}")
     public ResponseEntity<String> removeMemberFromProject(@PathVariable Long project_id, @PathVariable Long user_id){
         projectMemberService.removeMemberFromProject(project_id, user_id);

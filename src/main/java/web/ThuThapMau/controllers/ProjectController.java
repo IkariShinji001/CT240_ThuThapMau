@@ -27,39 +27,22 @@ public class ProjectController {
     private Cloudinary cloudinary;
 
     @GetMapping("/personal/users/{id}")
-    public ResponseEntity<List<ProjectDto>> getAllPersonalProject(@PathVariable(name = "id") Long user_id) {
+    public ResponseEntity<List<Project>> getAllPersonalProjectByUserId(@PathVariable(name = "id") Long user_id) {
         List<Project> projects;
-        List<ProjectDto> projectDtos = new ArrayList<>();
         projects = projectService.getAllPersonalProject(user_id);
 
-        for (Project project : projects) {
-            ProjectDto projectDto1 = new ProjectDto();
-            projectDto1.setProject_id(project.getProject_id());
-            projectDto1.setProject_name(project.getProject_name());
-            projectDto1.setProject_created_at(project.getProject_created_at());
-            projectDto1.setUser_id(project.getUser().getUser_id());
-            projectDtos.add(projectDto1);
-        }
-        return ResponseEntity.status(200).body(projectDtos);
+        return ResponseEntity.status(200).body(projects);
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         List<Project> projects;
-//        List<ProjectDto> projectDtos = new ArrayList<>();
         if (project_name != null && !project_name.isEmpty()) {
+            System.out.println(project_name);
             projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
         } else {
             projects = projectService.getAllProjectByUserId(user_id, accept_status);
         }
-//        for (Project project : projects) {
-//            ProjectDto projectDto1 = new ProjectDto();
-//            projectDto1.setProject_id(project.getProject_id());
-//            projectDto1.setProject_name(project.getProject_name());
-//            projectDto1.setProject_created_at(project.getProject_created_at());
-//            projectDto1.setUser_id(project.getUser().getUser_id());
-//            projectDtos.add(projectDto1);
-//        }
         return ResponseEntity.status(200).body(projects);
     }
 
@@ -69,7 +52,6 @@ public class ProjectController {
         return ResponseEntity.status(200).body(isOwner);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
         Project project = projectService.getProjectByProjectId(project_id);
@@ -78,9 +60,14 @@ public class ProjectController {
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload){
+    public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload) {
         projectService.updateProjectById(project_id, payload);
         return ResponseEntity.status(200).body("Cập nhật thành công");
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> options() {
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping
@@ -102,8 +89,10 @@ public class ProjectController {
             newProject.setProject_status(project_status);
             newProject.setProject_image_url(secureUrl);
             newProject.setProject_created_at(create);
-            Project project1 = projectService.createProject(newProject, Long.parseLong(user_id));
-            return ResponseEntity.ok(project1);
+
+            Project createdProject = projectService.createProject(newProject, Long.parseLong(user_id));
+            System.out.println(createdProject + "adsfasdfas");
+            return ResponseEntity.status(201).body(createdProject);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
