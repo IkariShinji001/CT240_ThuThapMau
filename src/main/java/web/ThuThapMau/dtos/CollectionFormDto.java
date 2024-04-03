@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class CollectionFormDto {
-    private String name;
+    private String collection_form_name;
     private Long user_id;
    private  Long collection_id;
    List<CollectionAttribute> attributeList;

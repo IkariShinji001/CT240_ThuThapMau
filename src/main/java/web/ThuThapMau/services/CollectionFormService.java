@@ -35,6 +35,10 @@ public class CollectionFormService {
     public List<CollectionForm> getAllForm(){
             return collectionFormRepository.findAll();
     }
+
+    public List<CollectionForm> getCollectionFormByCollectionId(Long collection_id){
+        return collectionFormRepository.findByCollectionId(collection_id);
+    }
     public CollectionForm getForm(Long id){
         return collectionFormRepository.findById(id).orElse(new CollectionForm());
     }

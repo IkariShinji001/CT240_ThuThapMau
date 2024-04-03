@@ -27,46 +27,78 @@ public class ProjectController {
 
     @GetMapping("/personal/users/{id}")
     public ResponseEntity<List<Project>> getAllPersonalProjectByUserId(@PathVariable(name = "id") Long user_id) {
-        List<Project> projects;
-        projects = projectService.getAllPersonalProject(user_id);
+        try {
+            List<Project> projects;
+            projects = projectService.getAllPersonalProject(user_id);
 
-        return ResponseEntity.status(200).body(projects);
+            return ResponseEntity.status(200).body(projects);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
+    }
+
+    @GetMapping("/users/noti/{id}")
+    public ResponseEntity<List<Project>> getAllNotificationsByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+        try {
+            List<Project> projects;
+            projects = projectService.getAllNotificationsByUserId(user_id, accept_status);
+            return ResponseEntity.status(200).body(projects);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
-        List<Project> projects;
-        if (project_name != null && !project_name.isEmpty()) {
-            System.out.println(project_name);
-            projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
-        } else {
-            projects = projectService.getAllProjectByUserId(user_id, accept_status);
+        try {
+            List<Project> projects;
+            if (project_name != null && !project_name.isEmpty()) {
+                System.out.println(project_name);
+                projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
+            } else {
+                projects = projectService.getAllProjectByUserId(user_id, accept_status);
+            }
+            return ResponseEntity.status(200).body(projects);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
-        return ResponseEntity.status(200).body(projects);
+
     }
 
     @GetMapping("/{project_id}/users/{user_id}")
     public ResponseEntity<Boolean> checkProjectOwner(@PathVariable Long project_id, @PathVariable Long user_id) {
-        Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
-        return ResponseEntity.status(200).body(isOwner);
+        try {
+            Boolean isOwner = projectService.checkOwnerProject(user_id, project_id);
+            return ResponseEntity.status(200).body(isOwner);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
-        Project project = projectService.getProjectByProjectId(project_id);
-        return ResponseEntity.status(200).body(project);
+        try {
+            Project project = projectService.getProjectByProjectId(project_id);
+            return ResponseEntity.status(200).body(project);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
 
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateProjectById(@PathVariable(name = "id") Long project_id, @RequestBody Project payload) {
-        projectService.updateProjectById(project_id, payload);
-        return ResponseEntity.status(200).body("Cập nhật thành công");
-    }
+        try {
+            projectService.updateProjectById(project_id, payload);
+            return ResponseEntity.status(200).body("Cập nhật thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> options() {
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping
@@ -77,26 +109,11 @@ public class ProjectController {
             @RequestPart("file") MultipartFile file,
             @RequestPart("user_id") String user_id) {
         try {
-            // Tải ảnh lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String secureUrl = (String) uploadResult.get("secure_url");
-            Project newProject = new Project();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date create = dateFormat.parse(project_created_at);
-
-            newProject.setProject_name(project_name);
-            newProject.setProject_status(project_status);
-            newProject.setProject_image_url(secureUrl);
-            newProject.setProject_created_at(create);
-
-            Project createdProject = projectService.createProject(newProject, Long.parseLong(user_id));
-            System.out.println(createdProject + "adsfasdfas");
-            return ResponseEntity.status(201).body(createdProject);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+            Project project = projectService.createProject(project_name, project_status, project_created_at, file, user_id);
+            return ResponseEntity.status(200).body(project);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
+
     }
 }
