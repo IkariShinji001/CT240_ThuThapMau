@@ -9,7 +9,6 @@ import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.ProjectRepository;
 import web.ThuThapMau.repositories.UserRepository;
-import web.ThuThapMau.repositories.UserRepository;
 
 import java.io.IOException;
 import java.text.ParseException;

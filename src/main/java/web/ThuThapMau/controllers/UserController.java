@@ -13,6 +13,7 @@ import web.ThuThapMau.services.UserService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -44,7 +45,7 @@ public class UserController {
         return ResponseEntity.status(400).body(null);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User dataUser){
         userService.updateUser(id, dataUser);
         return ResponseEntity.status(200).body("Cập nhật thành công");
@@ -54,6 +55,14 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.status(200).body("User with ID " + id + " has been deleted successfully");
+    }
+
+    @PatchMapping("/{user_id}/image")
+    public ResponseEntity<Optional<User>> updateUserImage(@PathVariable Long user_id,
+                                                         @RequestPart("file") MultipartFile file){
+        Optional<User> updated = userService.updateUserImage(user_id, file);
+        System.out.println(updated);
+        return ResponseEntity.status(200).body(updated);
     }
 
     @PostMapping
@@ -76,7 +85,7 @@ public class UserController {
             return ResponseEntity.ok(newUser);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
