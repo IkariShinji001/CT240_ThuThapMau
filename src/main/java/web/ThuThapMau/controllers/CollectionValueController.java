@@ -23,26 +23,39 @@ public class CollectionValueController {
     private CollectionValueService collectionValueService;
 
     @GetMapping
-    public List<CollectionValue> getAll(){
-        return collectionValueService.getAllValue();
+    public ResponseEntity<List<CollectionValue>> getAll() {
+        try {
+            List<CollectionValue> collectionValues = collectionValueService.getAllValue();
+            return ResponseEntity.status(200).body(collectionValues);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<CollectionValueDto> getFormValue(@PathVariable(name = "id") Long valueId) {
-        Optional<CollectionValue> collectionValueOptional = collectionValueService.getCollectionValue(valueId);
-        if(collectionValueOptional.isPresent()) {
-            CollectionValue collectionValue = collectionValueOptional.get();
-            CollectionValueDto collectionValueDto = new CollectionValueDto(
-                    collectionValue.getCollection_value_id(),
-                    collectionValue.getCollection_value(),
-                    collectionValue.getSubmit_time(),
-                    collectionValue.getCollection_attribute().getCollection_attribute_id(),
-                    collectionValue.getCollection_form().getCollection_form_id(),
-                    collectionValue.getUser().getUser_id()
-            );
-            return new ResponseEntity<>(collectionValueDto, HttpStatus.CREATED);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            Optional<CollectionValue> collectionValueOptional = collectionValueService.getCollectionValue(valueId);
+            if (collectionValueOptional.isPresent()) {
+                CollectionValue collectionValue = collectionValueOptional.get();
+                CollectionValueDto collectionValueDto = new CollectionValueDto(
+                        collectionValue.getCollection_value_id(),
+                        collectionValue.getCollection_value(),
+                        collectionValue.getSubmit_time(),
+                        collectionValue.getCollection_attribute().getCollection_attribute_id(),
+                        collectionValue.getCollection_form().getCollection_form_id(),
+                        collectionValue.getUser().getUser_id()
+                );
+                return new ResponseEntity<>(collectionValueDto, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+
         }
+
     }
 
 
@@ -59,11 +72,15 @@ public class CollectionValueController {
     public ResponseEntity<String> createValue(
             @RequestPart("Objs") Map<String, Object> attrs,
             @RequestPart("file") List<MultipartFile> files
-    ){
+    ) {
+        try {
+//            System.out.println(attrs);
+//            System.out.println(files);
+            return ResponseEntity.status(201).body(attrs.toString() + files);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
 
-        System.out.println(attrs);
-        System.out.println(files);
-        return ResponseEntity.status(201).body(attrs.toString() + files);
     }
 
 }

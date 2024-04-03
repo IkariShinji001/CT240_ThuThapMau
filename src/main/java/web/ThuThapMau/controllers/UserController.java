@@ -30,39 +30,57 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserId(@PathVariable Long id) {
-        User user = userService.getUserById(id).orElse(new User());
-        return ResponseEntity.status(201).body(user);
+        try {
+            User user = userService.getUserById(id).orElse(new User());
+            return ResponseEntity.status(201).body(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
     }
 
     @GetMapping("/emails/{user_mail}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String user_mail){
-        System.out.println(user_mail);
-        User user = userService.getUserByEmail(user_mail);
-        if(user != null){
-            return ResponseEntity.status(200).body(user);
+    public ResponseEntity<User> getUserByEmail(@PathVariable String user_mail) {
+        try {
+            User user = userService.getUserByEmail(user_mail);
+            if (user != null) {
+                return ResponseEntity.status(200).body(user);
+            }
+            return ResponseEntity.status(400).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
-        return ResponseEntity.status(400).body(null);
+
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User dataUser){
-        userService.updateUser(id, dataUser);
-        return ResponseEntity.status(200).body("Cập nhật thành công");
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User dataUser) {
+        try {
+            userService.updateUser(id, dataUser);
+            return ResponseEntity.status(200).body("Cập nhật thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.status(200).body("User with ID " + id + " has been deleted successfully");
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.status(200).body("User with ID " + id + " has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @PostMapping
     public ResponseEntity<User> CreateUser(
-                                                 @RequestPart("user_full_name") String user_full_name,
-                                                 @RequestPart("user_email") String user_email,
-                                                 @RequestPart("user_phone_number") String user_phone_number,
-                                                 @RequestPart("user_password") String user_password,
-                                                 @RequestPart("file") MultipartFile file) {
+            @RequestPart("user_full_name") String user_full_name,
+            @RequestPart("user_email") String user_email,
+            @RequestPart("user_phone_number") String user_phone_number,
+            @RequestPart("user_password") String user_password,
+            @RequestPart("file") MultipartFile file) {
         try {
             // Tải ảnh lên Cloudinary
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
