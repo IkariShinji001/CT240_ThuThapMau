@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.dtos.CollectionValueDto;
 import web.ThuThapMau.dtos.CollectionValueRequestBody;
 import web.ThuThapMau.dtos.ListValue;
@@ -12,6 +13,7 @@ import web.ThuThapMau.entities.CollectionValue;
 import web.ThuThapMau.services.CollectionValueService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -44,13 +46,24 @@ public class CollectionValueController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<List<CollectionValue>> createUser(@RequestBody CollectionValueRequestBody requestBody) {
-        Long user_id = requestBody.getUser_id();
-        Long form_id = requestBody.getCollection_form_id();
-        List<ListValue> valueList = requestBody.getValueList();
-        List<CollectionValue> collectionValues = collectionValueService.createValue(valueList, form_id, user_id);
-        return ResponseEntity.status(201).body(collectionValues);
+//    @PostMapping
+//    public ResponseEntity<List<CollectionValue>> createUser(@RequestBody CollectionValueRequestBody requestBody) {
+//        Long user_id = requestBody.getUser_id();
+//        Long form_id = requestBody.getCollection_form_id();
+//        List<ListValue> valueList = requestBody.getValueList();
+//        List<CollectionValue> collectionValues = collectionValueService.createValue(valueList, form_id, user_id);
+//        return ResponseEntity.status(201).body(collectionValues);
+//    }
+
+    @PostMapping()
+    public ResponseEntity<String> createValue(
+            @RequestPart("Objs") Map<String, Object> attrs,
+            @RequestPart("file") List<MultipartFile> files
+    ){
+
+        System.out.println(attrs);
+        System.out.println(files);
+        return ResponseEntity.status(201).body(attrs.toString() + files);
     }
 
 }

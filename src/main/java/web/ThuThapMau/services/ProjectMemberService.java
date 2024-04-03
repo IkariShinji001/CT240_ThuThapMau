@@ -21,13 +21,15 @@ public class ProjectMemberService {
     ProjectService projectService;
     @Autowired
     UserService userService;
+
     public List<ProjectMember> getMemberByProjectId(Long project_id, Integer accept_status) {
         return projectMemberRepository.getMembersByProjectId(project_id, accept_status);
     }
 
-    public void removeMemberFromProject(Long project_id, Long user_id){
+    public void removeMemberFromProject(Long project_id, Long user_id) {
         projectMemberRepository.removeMemberFromProject(project_id, user_id);
     }
+
 
     public void addMemberToProject(Long project_id, List<Long> user_ids) {
         Project project = projectService.getProjectByProjectId(project_id);
@@ -46,8 +48,22 @@ public class ProjectMemberService {
 
     public void updateMemberStatus(ProjectMemberRequestDto payload) {
         Long project_id = payload.getProject_id();
-        Long user_id =  payload.getUser_id();
+        Long user_id = payload.getUser_id();
         Long accept_status = payload.getAccept_status();
+        System.out.println(project_id + " " + user_id + " " + accept_status);
         projectMemberRepository.updateMemberStatus(project_id, user_id, accept_status);
+    }
+
+    public void addOwnerToProjectMember(Long projectId, Long userId) {
+        Project project = projectService.getProjectByProjectId(projectId);
+        User user = userService.getUserById(userId).get();
+        user.setUser_id(userId);
+        ProjectMember newProjectMember = new ProjectMember();
+        ProjectMemberId id = new ProjectMemberId();
+        id.setProject(project);
+        id.setUser(user);
+        newProjectMember.setId(id);
+        newProjectMember.setAccept_status(2);
+        projectMemberRepository.save(newProjectMember);
     }
 }

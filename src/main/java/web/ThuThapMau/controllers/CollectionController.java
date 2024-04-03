@@ -39,15 +39,17 @@ public class CollectionController {
     ProjectService projectService;
 
     @GetMapping
-    public List<Collection> getAllCollection() {return collectionService.getAllCollection();
+    public List<Collection> getAllCollection() {
+        return collectionService.getAllCollection();
     }
 
     @GetMapping("/projects/{project_id}")
-    public ResponseEntity<List<Collection>> getCollectionsByProjectId(@PathVariable Long project_id){
+    public ResponseEntity<List<Collection>> getCollectionsByProjectId(@PathVariable Long project_id) {
         List<Collection> collections = collectionService.getCollectionsByProjectId(project_id);
         System.out.println(collections);
         return ResponseEntity.status(200).body(collections);
     }
+
     @PostMapping
     public ResponseEntity<Collection> createCollection(@RequestParam("collection_name") String collection_name,
                                                        @RequestPart("collection_start") String collection_start,
@@ -56,50 +58,9 @@ public class CollectionController {
                                                        @RequestPart("project_id") String project_id,
                                                        @RequestPart("user_id") String user_id,
                                                        @RequestPart("file") MultipartFile file) {
-        // BlockingQueue để chia sẻ secureUrl giữa các luồng
-        BlockingQueue<String> sharedSecureUrlQueue = new ArrayBlockingQueue<>(1);
+        Collection collection = collectionService.createCollection(collection_name, collection_start, collection_end, collection_description, project_id, user_id, file);
+        return ResponseEntity.status(200).body(collection);
 
-        // Tạo luồng để tải ảnh lên Cloudinary
-        Thread uploadThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    System.out.println("Luong Phu");
-                    Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-                    String secureUrl = (String) uploadResult.get("secure_url");
-                    sharedSecureUrlQueue.put(secureUrl);
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        uploadThread.start();
-        try {
-            //
-            System.out.println("Luong chinh");
-            Collection newCollection = new Collection();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date start = dateFormat.parse(collection_start);
-            Date end = dateFormat.parse(collection_end);
-            User user = userService.getUserById(Long.parseLong(user_id)).get();
-            Project project = projectService.getProjectByProjectId(Long.parseLong(project_id));
-            newCollection.setUser(user);
-            newCollection.setProject(project);
-            newCollection.setCollection_name(collection_name);
-            newCollection.setCollection_description(collection_description);
-            newCollection.setCollection_end(end);
-            newCollection.setCollection_start(start);
-
-
-            String secureUrl = sharedSecureUrlQueue.take();
-            newCollection.setCollection_image_url(secureUrl);
-            collectionService.createCollection(newCollection);
-            return ResponseEntity.status(200).body(newCollection);
-        } catch (InterruptedException | ParseException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
     }
 
     @GetMapping("/{id}")
@@ -107,8 +68,9 @@ public class CollectionController {
         Optional<Collection> collection = collectionService.getCollectionById(id);
         return ResponseEntity.status(201).body(collection);
     }
+
     @PatchMapping("/{id}")
-    public ResponseEntity updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload){
+    public ResponseEntity updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload) {
         collectionService.updateCollectionById(id, payload);
         return ResponseEntity.status(200).body("Cập nhật thành công");
     }
