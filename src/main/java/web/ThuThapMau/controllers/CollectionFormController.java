@@ -28,20 +28,26 @@ public class CollectionFormController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(collectionForms);
     }
 
+    @GetMapping("/api/v1/collection-forms/collections/{collection_id}")
+    public ResponseEntity<List<CollectionForm>> getCollectionFormByCollectionId( @PathVariable Long collection_id){
+        List<CollectionForm> collectionForms = collectionFormService.getCollectionFormByCollectionId(collection_id);
+        return ResponseEntity.status(200).body(collectionForms);
+    }
+
     @PostMapping("/api/v1/collection-forms")
     public ResponseEntity<CollectionForm> createCollectionForm(@RequestBody CollectionFormDto collectionFormDto) {
-        String name = collectionFormDto.getName();
+        String collection_form_name = collectionFormDto.getCollection_form_name();
         Long user_id = collectionFormDto.getUser_id();
         Long collection_id = collectionFormDto.getCollection_id();
         List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();
         CollectionForm collectionForm = collectionFormService.createCollectionForm(user_id, collection_id,
-                name, collectionAttributes);
+                collection_form_name, collectionAttributes);
         return ResponseEntity.ok(collectionForm);
     }
 
     @PatchMapping("/api/v1/collection-forms/{id}")
     public ResponseEntity<CollectionForm> updateCollectionForm(@PathVariable(name = "id") Long collection_form_id, @RequestBody CollectionFormDto collectionFormDto) {
-        String name = collectionFormDto.getName();
+        String name = collectionFormDto.getCollection_form_name();
         Long user_id = collectionFormDto.getUser_id();
         Long collection_id = collectionFormDto.getCollection_id();
         List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();

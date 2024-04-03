@@ -7,14 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import web.ThuThapMau.dtos.ProjectDto;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.services.ProjectService;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -27,16 +28,15 @@ public class ProjectController {
     private Cloudinary cloudinary;
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<List<ProjectDto>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
+    public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         List<Project> projects;
-        List<ProjectDto> projectDtos = new ArrayList<>();
         if (project_name != null && !project_name.isEmpty()) {
             System.out.println(project_name);
             projects = projectService.getAllProjectByUserIdAndName(user_id, project_name, accept_status);
         } else {
             projects = projectService.getAllProjectByUserId(user_id, accept_status);
         }
-        return ResponseEntity.status(200).body(projectDtos);
+        return ResponseEntity.status(200).body(projects);
     }
 
     @GetMapping("/{project_id}/users/{user_id}")
@@ -49,12 +49,6 @@ public class ProjectController {
     public ResponseEntity<Project> getProjectByProjectId(@PathVariable(name = "id") Long project_id) {
         Project project = projectService.getProjectByProjectId(project_id);
         return ResponseEntity.status(200).body(project);
-    }
-
-    @GetMapping("/users/{user_id}/info")
-    public ResponseEntity<List<Project>> getAllProjectWithUserInfoByProjectId(@PathVariable Long user_id, @RequestParam int accept_status){
-        List<Project> projectList = projectService.getAllProjectWithUserInfoByProjectId(user_id, accept_status);
-        return ResponseEntity.status(200).body(projectList);
     }
 
     @PatchMapping("/{id}")

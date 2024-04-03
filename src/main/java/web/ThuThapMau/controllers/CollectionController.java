@@ -76,26 +76,26 @@ public class CollectionController {
 
         uploadThread.start();
         try {
+            //
             System.out.println("Luong chinh");
             Collection newCollection = new Collection();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date start = dateFormat.parse(collection_start);
             Date end = dateFormat.parse(collection_end);
             User user = userService.getUserById(Long.parseLong(user_id)).get();
-            user.setUser_id(Long.parseLong(user_id));
             Project project = projectService.getProjectByProjectId(Long.parseLong(project_id));
-            project.setProject_id(Long.parseLong(user_id));
             newCollection.setUser(user);
             newCollection.setProject(project);
             newCollection.setCollection_name(collection_name);
             newCollection.setCollection_description(collection_description);
             newCollection.setCollection_end(end);
             newCollection.setCollection_start(start);
-            System.out.println(newCollection);
+
+
             String secureUrl = sharedSecureUrlQueue.take();
             newCollection.setCollection_image_url(secureUrl);
             collectionService.createCollection(newCollection);
-            return ResponseEntity.ok(newCollection);
+            return ResponseEntity.status(200).body(newCollection);
         } catch (InterruptedException | ParseException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
