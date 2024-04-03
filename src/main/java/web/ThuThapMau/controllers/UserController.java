@@ -24,8 +24,13 @@ public class UserController {
     private Cloudinary cloudinary;
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        try{
+            List<User> users = userService.getAllUsers();
+            return ResponseEntity.status(200).body(users);
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{id}")
@@ -75,28 +80,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> CreateUser(
-            @RequestPart("user_full_name") String user_full_name,
-            @RequestPart("user_email") String user_email,
-            @RequestPart("user_phone_number") String user_phone_number,
-            @RequestPart("user_password") String user_password,
-            @RequestPart("file") MultipartFile file) {
-        try {
-            // Tải ảnh lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String secureUrl = (String) uploadResult.get("secure_url");
-            User newUser = new User();
-            newUser.setUser_full_name(user_full_name);
-            newUser.setUser_email(user_email);
-            newUser.setUser_phone_number(user_phone_number);
-            newUser.setUser_password(user_password);
-            newUser.setUser_image_url(secureUrl);
-            return ResponseEntity.ok(newUser);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    public ResponseEntity<User> CreateUser(@RequestBody User payload){
+        try{
+            payload.setUser_image_url("https://as2.ftcdn.net/v2/jpg/04/10/43/77/1000_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg");
+            User newuser =  userService.createUser(payload);
+            return ResponseEntity.status(200).body(newuser);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(null);
         }
+
     }
-
-
 }

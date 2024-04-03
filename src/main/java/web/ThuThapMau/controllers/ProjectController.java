@@ -114,7 +114,6 @@ public class ProjectController {
             return ResponseEntity.status(200).body(project);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
-
         }
 
     }

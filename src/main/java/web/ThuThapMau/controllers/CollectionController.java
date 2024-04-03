@@ -58,22 +58,32 @@ public class CollectionController {
                                                        @RequestPart("project_id") String project_id,
                                                        @RequestPart("user_id") String user_id,
                                                        @RequestPart("file") MultipartFile file) {
-        Collection collection = collectionService.createCollection(collection_name, collection_start, collection_end, collection_description, project_id, user_id, file);
-        return ResponseEntity.status(200).body(collection);
-
+        try {
+            Collection collection = collectionService.createCollection(collection_name, collection_start, collection_end, collection_description, project_id, user_id, file);
+            return ResponseEntity.status(200).body(collection);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Collection>> getCollectionById(@PathVariable Long id) {
-        Optional<Collection> collection = collectionService.getCollectionById(id);
-        return ResponseEntity.status(201).body(collection);
+        try {
+            Optional<Collection> collection = collectionService.getCollectionById(id);
+            return ResponseEntity.status(201).body(collection);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload) {
-        collectionService.updateCollectionById(id, payload);
-        return ResponseEntity.status(200).body("Cập nhật thành công");
+        try {
+            collectionService.updateCollectionById(id, payload);
+            return ResponseEntity.status(200).body("Cập nhật thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
-
-
 }
