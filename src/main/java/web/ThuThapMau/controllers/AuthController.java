@@ -18,12 +18,16 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping()
-    public ResponseEntity<User> login(@RequestBody User user, HttpServletResponse response){
-        User existedUser = userService.login(user, response);
-        if(existedUser != null){
-            return ResponseEntity.status(200).body(existedUser);
-        }else {
-            return ResponseEntity.status(400).body(null);
+    public ResponseEntity<User> login(@RequestBody User user, HttpServletResponse response) {
+        try {
+            User existedUser = userService.login(user, response);
+            if (existedUser != null) {
+                return ResponseEntity.status(200).body(existedUser);
+            } else {
+                return ResponseEntity.status(400).body(null);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
     }
 }

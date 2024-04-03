@@ -24,36 +24,58 @@ public class CollectionFormController {
 
     @GetMapping("/api/v1/collection-forms")
     public ResponseEntity<List<CollectionForm>> getCollectionForm() {
-        List<CollectionForm> collectionForms = collectionFormService.getAllForm();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(collectionForms);
-    }
+        try{
+            List<CollectionForm> collectionForms = collectionFormService.getAllForm();
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(collectionForms);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
+       }
 
     @GetMapping("/api/v1/collection-forms/collections/{collection_id}")
     public ResponseEntity<List<CollectionForm>> getCollectionFormByCollectionId( @PathVariable Long collection_id){
-        List<CollectionForm> collectionForms = collectionFormService.getCollectionFormByCollectionId(collection_id);
-        return ResponseEntity.status(200).body(collectionForms);
+        try{
+            List<CollectionForm> collectionForms = collectionFormService.getCollectionFormByCollectionId(collection_id);
+            return ResponseEntity.status(200).body(collectionForms);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
+    @GetMapping("/api/v1/collection-forms/{id}")
+    public ResponseEntity<CollectionForm> getCollectionFormById(@PathVariable(name = "id") Long collectionFormId){
+        CollectionForm collectionForm = collectionFormService.getForm(collectionFormId);
+        return ResponseEntity.status(200).body(collectionForm);
+    }
     @PostMapping("/api/v1/collection-forms")
     public ResponseEntity<CollectionForm> createCollectionForm(@RequestBody CollectionFormDto collectionFormDto) {
-        String collection_form_name = collectionFormDto.getCollection_form_name();
-        Long user_id = collectionFormDto.getUser_id();
-        Long collection_id = collectionFormDto.getCollection_id();
-        List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();
-        CollectionForm collectionForm = collectionFormService.createCollectionForm(user_id, collection_id,
-                collection_form_name, collectionAttributes);
-        return ResponseEntity.ok(collectionForm);
+        try{
+            String collection_form_name = collectionFormDto.getCollection_form_name();
+            Long user_id = collectionFormDto.getUser_id();
+            Long collection_id = collectionFormDto.getCollection_id();
+            List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();
+            CollectionForm collectionForm = collectionFormService.createCollectionForm(user_id, collection_id,
+                    collection_form_name, collectionAttributes);
+            return ResponseEntity.ok(collectionForm);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 
     @PatchMapping("/api/v1/collection-forms/{id}")
     public ResponseEntity<CollectionForm> updateCollectionForm(@PathVariable(name = "id") Long collection_form_id, @RequestBody CollectionFormDto collectionFormDto) {
-        String name = collectionFormDto.getCollection_form_name();
-        Long user_id = collectionFormDto.getUser_id();
-        Long collection_id = collectionFormDto.getCollection_id();
-        List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();
-        CollectionForm collectionForm = collectionFormService.updateCollectionForm(collection_form_id, user_id, collection_id,
-                name, collectionAttributes);
-        return ResponseEntity.ok(collectionForm);
-
+        try{
+            String name = collectionFormDto.getCollection_form_name();
+            Long user_id = collectionFormDto.getUser_id();
+            Long collection_id = collectionFormDto.getCollection_id();
+            List<CollectionAttribute> collectionAttributes = collectionFormDto.getAttributeList();
+            CollectionForm collectionForm = collectionFormService.updateCollectionForm(collection_form_id, user_id, collection_id,
+                    name, collectionAttributes);
+            return ResponseEntity.ok(collectionForm);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }
