@@ -18,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM users u WHERE u.user_email = :user_mail")
     User findByUserEmail(String user_mail);
+    @Modifying
+    @Transactional
+    @Query("UPDATE users u SET u.user_image_url = :image WHERE u.user_id = :user_id")
+    void updateUserImage(Long user_id, String image);
 }

@@ -13,6 +13,7 @@ import web.ThuThapMau.services.UserService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -79,6 +80,14 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/{user_id}/image")
+    public ResponseEntity<Optional<User>> updateUserImage(@PathVariable Long user_id,
+                                                          @RequestPart("file") MultipartFile file){
+        Optional<User> updated = userService.updateUserImage(user_id, file);
+        System.out.println(updated);
+        return ResponseEntity.status(200).body(updated);
+    }
+
     @PostMapping
     public ResponseEntity<User> CreateUser(@RequestBody User payload){
         try{
@@ -88,6 +97,7 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.status(500).body(null);
         }
-
     }
+
+
 }
