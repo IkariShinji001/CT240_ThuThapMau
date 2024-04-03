@@ -15,10 +15,7 @@ import web.ThuThapMau.services.ProjectService;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -47,6 +44,7 @@ public class CollectionService {
                                        MultipartFile file) {
         BlockingQueue<String> sharedSecureUrlQueue = new ArrayBlockingQueue<>(1);
 
+        List<String> secureUrlList = new ArrayList<>();
         Thread uploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -55,6 +53,7 @@ public class CollectionService {
                     Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
                     String secureUrl = (String) uploadResult.get("secure_url");
                     sharedSecureUrlQueue.put(secureUrl);
+                    secureUrlList.add(secureUrl);
                 } catch (IOException e){
                     e.printStackTrace();
                 } catch (InterruptedException e) {

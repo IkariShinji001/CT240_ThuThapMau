@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import web.ThuThapMau.dtos.ProjectDto;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.services.ProjectService;
 
