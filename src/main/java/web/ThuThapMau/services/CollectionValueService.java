@@ -6,14 +6,11 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import web.ThuThapMau.dtos.TestValueDto;
+import web.ThuThapMau.dtos.RequestValueDto;
 import web.ThuThapMau.entities.*;
-import web.ThuThapMau.entities.Collection;
 import web.ThuThapMau.repositories.*;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -28,11 +25,7 @@ public class CollectionValueService {
     private Cloudinary cloudinary;
 
     @Autowired
-    public CollectionValueService(CollectionValueRepository collectionValueRepository,
-                                  UserRepository userRepository,
-                                  CollectionAttributeRepository attributeRepository,
-                                  CollectionFormRepository collectionFormRepo,
-                                  Cloudinary cloudinary) {
+    public CollectionValueService(CollectionValueRepository collectionValueRepository, UserRepository userRepository, CollectionAttributeRepository attributeRepository, CollectionFormRepository collectionFormRepo, Cloudinary cloudinary) {
         this.collectionValueRepository = collectionValueRepository;
         this.userRepository = userRepository;
         this.attributeRepository = attributeRepository;
@@ -55,11 +48,7 @@ public class CollectionValueService {
     }
 
 
-    public List<CollectionValue> createValue(Long user_id,
-                                             Long collection_form_id,
-                                             List<TestValueDto> valueDtos,
-                                             Long lastIdx,
-                                             List<MultipartFile> files) {
+    public List<CollectionValue> createValue(Long user_id, Long collection_form_id, List<RequestValueDto> valueDtos, Long lastIdx, List<MultipartFile> files) {
         BlockingQueue<String> sharedSecureUrlQueue = new ArrayBlockingQueue<>(100);
 
         List<Thread> uploadThreads = new ArrayList<>();
@@ -79,7 +68,7 @@ public class CollectionValueService {
 
         for (Thread uploadThread : uploadThreads) {
             try {
-                    uploadThread.join();
+                uploadThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -87,15 +76,12 @@ public class CollectionValueService {
 
         try {
             User user = userRepository.findById(user_id).orElse(new User());
-            CollectionForm collectionForm = collectionFormRepo.findById(collection_form_id)
-                    .orElse(new CollectionForm());
+            CollectionForm collectionForm = collectionFormRepo.findById(collection_form_id).orElse(new CollectionForm());
             Long maxSubmitTime = findMaxSubmitTimeById(user_id, collection_form_id) + 1;
             List<CollectionValue> collectionValueList = new ArrayList<>();
 
-            for (TestValueDto valueDto : valueDtos) {
-                CollectionAttribute tmpAttr = attributeRepository
-                        .findById(valueDto.getCollection_attribute_id())
-                        .orElse(new CollectionAttribute());
+            for (RequestValueDto valueDto : valueDtos) {
+                CollectionAttribute tmpAttr = attributeRepository.findById(valueDto.getCollection_attribute_id()).orElse(new CollectionAttribute());
                 CollectionValue collectionValue = new CollectionValue();
                 collectionValue.setUser(user);
                 collectionValue.setCollection_form(collectionForm);
@@ -107,9 +93,7 @@ public class CollectionValueService {
             }
 
             for (int i = 0; i < files.size(); i++) {
-                CollectionAttribute tmpAttr = attributeRepository
-                        .findById(lastIdx)
-                        .orElse(new CollectionAttribute());
+                CollectionAttribute tmpAttr = attributeRepository.findById(lastIdx).orElse(new CollectionAttribute());
                 CollectionValue tmpCollectionVal = new CollectionValue();
                 tmpCollectionVal.setUser(user);
                 tmpCollectionVal.setCollection_form(collectionForm);

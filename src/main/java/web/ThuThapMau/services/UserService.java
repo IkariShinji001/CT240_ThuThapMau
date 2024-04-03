@@ -34,7 +34,6 @@ public class UserService {
         return userRepository.findByUserEmail(user_mail);
     }
     public User createUser(User newUser){
-        System.out.println(newUser.getUser_image_url());
         return userRepository.save(newUser);
     }
     public Optional<User> getUserById(Long id){

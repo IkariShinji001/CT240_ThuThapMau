@@ -1,8 +1,6 @@
 package web.ThuThapMau.controllers;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +14,11 @@ import java.util.List;
 
 @RestController
 public class CollectionAttributeController {
-    private ModelMapper modelMapper;
     private CollectionAttributeService collectionAttributeService;
 
     @Autowired
-    public CollectionAttributeController(ModelMapper modelMapper, CollectionAttributeService collectionAttributeService) {
+    public CollectionAttributeController(CollectionAttributeService collectionAttributeService) {
         this.collectionAttributeService = collectionAttributeService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/api/v1/collection-attributes")
@@ -47,7 +43,7 @@ public class CollectionAttributeController {
     }
 
     @GetMapping("/api/v1/collection-attributes/{form_id}")
-    public ResponseEntity<List<AttributeDto>> getAllAttributeByFormId(@PathVariable Long form_id){
+    public ResponseEntity<List<AttributeDto>> getAllAttributeByFormId(@PathVariable Long form_id) {
         List<CollectionAttribute> collectionAttributes = collectionAttributeService.getAllAttributesByFormId(form_id);
         List<AttributeDto> attributeDtos = new ArrayList<>();
 
