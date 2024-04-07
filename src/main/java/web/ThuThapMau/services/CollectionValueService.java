@@ -33,8 +33,8 @@ public class CollectionValueService {
         this.cloudinary = cloudinary;
     }
 
-    public List<CollectionValue> getAllValue() {
-        return collectionValueRepository.findAll();
+    public List<CollectionValue> getAllValue(Long collection_form_id) {
+        return collectionValueRepository.findAllValueByFormId(collection_form_id);
     }
 
     public Optional<CollectionValue> getCollectionValue(Long valueId) {

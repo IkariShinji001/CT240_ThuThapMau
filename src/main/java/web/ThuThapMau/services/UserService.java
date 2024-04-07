@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Semaphore;
 
 @Service
 public class UserService {
@@ -40,15 +41,15 @@ public class UserService {
 
     public Optional<User> updateUserImage(Long user_id, MultipartFile file){
         BlockingQueue<String> sharedSecureUrlQueue = new ArrayBlockingQueue<>(1);
-
+        Semaphore semaphore = new Semaphore(0);
         Thread uploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    System.out.println("Luong Phu");
                     Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
                     String secureUrl = (String) uploadResult.get("secure_url");
                     sharedSecureUrlQueue.put(secureUrl);
+                    semaphore.release();
                 } catch (IOException e){
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -59,10 +60,10 @@ public class UserService {
 
         uploadThread.start();
         try {
+            semaphore.acquire();
             String image = sharedSecureUrlQueue.take();
             userRepository.updateUserImage(user_id, image);
-            Optional<User> updated = Optional.of(userRepository.findById(user_id).get());
-            return updated;
+            return Optional.of(userRepository.findById(user_id).get());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -93,9 +94,7 @@ public class UserService {
     public User login(User user, HttpServletResponse response){
         String userEmail = user.getUser_email();
         String userPassword = user.getUser_password();
-        System.out.println(userEmail + userPassword);
         User existedUser = userRepository.login(userEmail, userPassword);
-        System.out.println(existedUser);
         if(existedUser != null){
             String jwtToken = JwtTokenProvider.createJwt(existedUser);
             Cookie cookie = new Cookie("jwtToken", jwtToken);

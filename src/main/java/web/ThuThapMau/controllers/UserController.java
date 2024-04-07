@@ -81,10 +81,10 @@ public class UserController {
     }
 
     @PatchMapping("/{user_id}/image")
-    public ResponseEntity<Optional<User>> updateUserImage(@PathVariable Long user_id,
+    public ResponseEntity<User> updateUserImage(@PathVariable Long user_id,
                                                           @RequestPart("file") MultipartFile file){
-        Optional<User> updated = userService.updateUserImage(user_id, file);
-        System.out.println(updated);
+        User updated = userService.updateUserImage(user_id, file).get();
+        System.out.println("dfas "+updated);
         return ResponseEntity.status(200).body(updated);
     }
 

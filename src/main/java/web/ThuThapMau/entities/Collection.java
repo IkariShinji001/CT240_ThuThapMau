@@ -20,9 +20,7 @@ public class Collection {
     private Date collection_end;
 
     private String collection_image_url;
-
     private String collection_description;
-
     private Date collection_created_at;
 
 
