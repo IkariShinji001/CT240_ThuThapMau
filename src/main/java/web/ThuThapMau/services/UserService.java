@@ -94,9 +94,7 @@ public class UserService {
     public User login(User user, HttpServletResponse response){
         String userEmail = user.getUser_email();
         String userPassword = user.getUser_password();
-        System.out.println(userEmail + userPassword);
         User existedUser = userRepository.login(userEmail, userPassword);
-        System.out.println(existedUser);
         if(existedUser != null){
             String jwtToken = JwtTokenProvider.createJwt(existedUser);
             Cookie cookie = new Cookie("jwtToken", jwtToken);

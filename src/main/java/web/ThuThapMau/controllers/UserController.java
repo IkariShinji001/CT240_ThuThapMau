@@ -1,7 +1,6 @@
 package web.ThuThapMau.controllers;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController

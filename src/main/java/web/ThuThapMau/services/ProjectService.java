@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -34,6 +35,10 @@ public class ProjectService {
 
     public List<Project> getAllPersonalProject(Long userId) {
         return projectRepository.findAllPersonalProjectByUserId(userId);
+    }
+
+    public Project findByInviteCode(UUID inviteCode){
+        return projectRepository.findByUUID(inviteCode);
     }
 
     public List<Project> getAllProjectByUserId(Long user_id, Long accept_status){
