@@ -20,4 +20,7 @@ public class CollectionAttributeService {
         return collectionAttributeRepository.findAll();
     }
 
+    public List<CollectionAttribute> getAllAttributesByFormId(Long formId) {
+        return collectionAttributeRepository.findByCollectionFormId(formId);
+    }
 }

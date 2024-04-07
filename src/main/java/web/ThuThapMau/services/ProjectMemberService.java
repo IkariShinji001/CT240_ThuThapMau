@@ -11,6 +11,7 @@ import web.ThuThapMau.repositories.ProjectMemberRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProjectMemberService {
@@ -28,6 +29,16 @@ public class ProjectMemberService {
 
     public void removeMemberFromProject(Long project_id, Long user_id) {
         projectMemberRepository.removeMemberFromProject(project_id, user_id);
+    }
+
+    public void requestJoinToProject(Long user_id, UUID inviteCode){
+        Project project = projectService.findByInviteCode(inviteCode);
+        User user = userService.getUserById(user_id).get();
+        ProjectMemberId id = new ProjectMemberId(user, project);
+        ProjectMember newRequest = new ProjectMember();
+        newRequest.setAccept_status(1);
+        newRequest.setId(id);
+        projectMemberRepository.save(newRequest);
     }
 
 

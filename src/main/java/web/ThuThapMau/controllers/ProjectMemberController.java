@@ -9,6 +9,7 @@ import web.ThuThapMau.entities.ProjectMember;
 import web.ThuThapMau.services.ProjectMemberService;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/api/v1/project-member")
@@ -24,6 +25,13 @@ public class ProjectMemberController {
     public ResponseEntity<String> addMemberToProject(@PathVariable Long project_id, @RequestBody List<Long> user_ids){
         projectMemberService.addMemberToProject(project_id, user_ids);
         return ResponseEntity.status(200).body("OK");
+    }
+
+    @GetMapping("/users/{user_id}/request-join-to-project/{inviteCode}")
+    public ResponseEntity<UUID> requestJoinToProject(@PathVariable Long user_id, @PathVariable UUID inviteCode){
+        System.out.println(inviteCode);
+        projectMemberService.requestJoinToProject(user_id, inviteCode);
+        return ResponseEntity.status(200).body(inviteCode);
     }
 
     @PostMapping("/owner-projects/{project_id}")

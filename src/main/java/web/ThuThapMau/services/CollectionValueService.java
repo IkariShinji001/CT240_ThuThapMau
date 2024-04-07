@@ -1,74 +1,132 @@
 package web.ThuThapMau.services;
 
-import lombok.AllArgsConstructor;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import web.ThuThapMau.dtos.CollectionValueDto;
-import web.ThuThapMau.dtos.ListValue;
-import web.ThuThapMau.entities.CollectionAttribute;
-import web.ThuThapMau.entities.CollectionForm;
-import web.ThuThapMau.entities.CollectionValue;
-import web.ThuThapMau.entities.User;
-import web.ThuThapMau.repositories.CollectionAttributeRepository;
-import web.ThuThapMau.repositories.CollectionValueRepository;
-import web.ThuThapMau.repositories.UserRepository;
+import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.dtos.TestValueDto;
+import web.ThuThapMau.entities.*;
+import web.ThuThapMau.entities.Collection;
+import web.ThuThapMau.repositories.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 @Data
-@AllArgsConstructor
 @Service
 public class CollectionValueService {
-    @Autowired
     private CollectionValueRepository collectionValueRepository;
-
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private CollectionAttributeRepository attributeRepository;
+    private CollectionFormRepository collectionFormRepo;
+    private Cloudinary cloudinary;
 
     @Autowired
-    private CollectionFormService collectionFormService;
+    public CollectionValueService(CollectionValueRepository collectionValueRepository,
+                                  UserRepository userRepository,
+                                  CollectionAttributeRepository attributeRepository,
+                                  CollectionFormRepository collectionFormRepo,
+                                  Cloudinary cloudinary) {
+        this.collectionValueRepository = collectionValueRepository;
+        this.userRepository = userRepository;
+        this.attributeRepository = attributeRepository;
+        this.collectionFormRepo = collectionFormRepo;
+        this.cloudinary = cloudinary;
+    }
 
-
-
-    public List<CollectionValue> getAllValue(){
+    public List<CollectionValue> getAllValue() {
         return collectionValueRepository.findAll();
     }
-    public Optional<CollectionValue> getCollectionValue(Long valueId){
+
+    public Optional<CollectionValue> getCollectionValue(Long valueId) {
         return collectionValueRepository.findById(valueId);
     }
-//
-    public Long findMaxSubmitTimeById(Long formId, Long userId){
+
+    public Long findMaxSubmitTimeById(Long userId, Long formId) {
         Long max = collectionValueRepository.findMaxSubmit(formId, userId);
         if (max == null) max = 0L;
         return max;
     }
 
 
-    public List<CollectionValue> createValue(List<ListValue> listValue, Long formId, Long userId) {
-        User tmpUser = userRepository.findById(userId).orElse(new User());
-        CollectionForm tmpCollectionForm = collectionFormService.getForm(formId);
-        Long maxSubmitTime = findMaxSubmitTimeById(formId, userId) + 1;
+    public List<CollectionValue> createValue(Long user_id,
+                                             Long collection_form_id,
+                                             List<TestValueDto> valueDtos,
+                                             Long lastIdx,
+                                             List<MultipartFile> files) {
+        BlockingQueue<String> sharedSecureUrlQueue = new ArrayBlockingQueue<>(100);
 
-        List<CollectionValue> collectionValueList = new ArrayList<>();
-        for (ListValue value : listValue) {
-            CollectionAttribute tmpAttr = attributeRepository.findById(value.getCollection_attribute_id())
-                    .orElse(new CollectionAttribute());
-            CollectionValue tmpCollectionValue = new CollectionValue();
-            tmpCollectionValue.setUser(tmpUser);
-            tmpCollectionValue.setCollection_form(tmpCollectionForm);
-            tmpCollectionValue.setCollection_attribute(tmpAttr);
-            tmpCollectionValue.setSubmit_time(maxSubmitTime);
-            tmpCollectionValue.setCollection_value(value.getCollection_value());
-            collectionValueList.add(tmpCollectionValue);
+        List<Thread> uploadThreads = new ArrayList<>();
+        for (MultipartFile file : files) {
+            Thread uploadThread = new Thread(() -> {
+                try {
+                    Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                    String secureUrl = (String) uploadResult.get("secure_url");
+                    sharedSecureUrlQueue.put(secureUrl);
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            uploadThreads.add(uploadThread);
+            uploadThread.start();
         }
 
-        return collectionValueRepository.saveAll(collectionValueList);
+        for (Thread uploadThread : uploadThreads) {
+            try {
+                    uploadThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            User user = userRepository.findById(user_id).orElse(new User());
+            CollectionForm collectionForm = collectionFormRepo.findById(collection_form_id)
+                    .orElse(new CollectionForm());
+            Long maxSubmitTime = findMaxSubmitTimeById(user_id, collection_form_id) + 1;
+            List<CollectionValue> collectionValueList = new ArrayList<>();
+
+            for (TestValueDto valueDto : valueDtos) {
+                CollectionAttribute tmpAttr = attributeRepository
+                        .findById(valueDto.getCollection_attribute_id())
+                        .orElse(new CollectionAttribute());
+                CollectionValue collectionValue = new CollectionValue();
+                collectionValue.setUser(user);
+                collectionValue.setCollection_form(collectionForm);
+                collectionValue.setCollection_attribute(tmpAttr);
+                collectionValue.setSubmit_time(maxSubmitTime);
+                collectionValue.setCollection_value(valueDto.getCollection_value());
+
+                collectionValueList.add(collectionValue);
+            }
+
+            for (int i = 0; i < files.size(); i++) {
+                CollectionAttribute tmpAttr = attributeRepository
+                        .findById(lastIdx)
+                        .orElse(new CollectionAttribute());
+                CollectionValue tmpCollectionVal = new CollectionValue();
+                tmpCollectionVal.setUser(user);
+                tmpCollectionVal.setCollection_form(collectionForm);
+                tmpCollectionVal.setCollection_attribute(tmpAttr);
+                tmpCollectionVal.setSubmit_time(maxSubmitTime);
+                tmpCollectionVal.setCollection_value(sharedSecureUrlQueue.poll());
+
+                collectionValueList.add(tmpCollectionVal);
+            }
+
+            List<CollectionValue> createdCollectionValues = collectionValueRepository.saveAll(collectionValueList);
+            return createdCollectionValues;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
 }
 

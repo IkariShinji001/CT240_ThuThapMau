@@ -43,6 +43,11 @@ public class CollectionFormController {
 
     }
 
+    @GetMapping("/api/v1/collection-forms/{id}")
+    public ResponseEntity<CollectionForm> getCollectionFormById(@PathVariable(name = "id") Long collectionFormId){
+        CollectionForm collectionForm = collectionFormService.getForm(collectionFormId);
+        return ResponseEntity.status(200).body(collectionForm);
+    }
     @PostMapping("/api/v1/collection-forms")
     public ResponseEntity<CollectionForm> createCollectionForm(@RequestBody CollectionFormDto collectionFormDto) {
         try{
