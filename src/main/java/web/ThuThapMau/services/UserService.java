@@ -19,28 +19,15 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
-    public User saveUser(User user) {
-        try {
-            return userRepository.save(user);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        return user;
-    }
-
-
     public User getUserByEmail(String user_mail){
         return userRepository.findByUserEmail(user_mail);
     }
     public User createUser(User newUser){
-        System.out.println(newUser.getUser_image_url());
         return userRepository.save(newUser);
     }
     public Optional<User> getUserById(Long id){
         return userRepository.findById(id);
     }
-
     public void updateUser(Long id, User dataUser){
         String userName = dataUser != null ? dataUser.getUser_full_name() : null;
         String userEmail = dataUser != null ? dataUser.getUser_email() : null;
@@ -69,6 +56,9 @@ public class UserService {
             return existedUser;
         }
         return null;
+    }
+    public void  updatePassword(Long user_id, String newPassword){
+        userRepository.updatePasswordByUser_id(user_id, newPassword);
     }
 
 }

@@ -2,11 +2,14 @@ package web.ThuThapMau.controllers;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.Util.EmailService;
+import web.ThuThapMau.dtos.EmailDto;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
@@ -21,8 +24,19 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private Cloudinary cloudinary;
+    private EmailService emailService;
 
+    @PostMapping("/sendEmail/forget-password")
+    public ResponseEntity<String> sendEmail(@RequestBody EmailDto emailDto) {
+        try {
+            System.out.println(emailDto);
+            long user_id =  userService.getUserByEmail(emailDto.getUser_email()).getUser_id() ;
+            emailService.sendEmail(emailDto.getUser_email(), user_id);
+            return ResponseEntity.status(200).body("Gui mail thanh cong");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         try{
@@ -66,7 +80,15 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
-
+    }
+    @PatchMapping("/reset-password")
+    public  ResponseEntity<String> updatePassword(@RequestParam Long user_id, @RequestBody String newPassword){
+        try{
+            userService.updatePassword(user_id, newPassword);
+            return  ResponseEntity.status(200).body("Cập nhật thành công");
+        } catch (Exception e){
+            return  ResponseEntity.status(200).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
