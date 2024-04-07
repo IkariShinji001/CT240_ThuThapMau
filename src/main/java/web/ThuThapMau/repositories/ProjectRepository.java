@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import web.ThuThapMau.entities.Project;
 
 import java.util.List;
+import java.util.UUID;
+
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Modifying
     @Transactional
@@ -32,4 +34,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT p FROM Project p WHERE p.user.user_id =:userId")
     List<Project> findAllPersonalProjectByUserId(Long userId);
+
+    @Query("SELECT p FROM Project p WHERE p.inviteCode = :inviteCode")
+    Project findByUUID(UUID inviteCode);
+
+    @Query("SELECT p FROM Project p JOIN ProjectMember pm ON pm.id.project.project_id = p.project_id JOIN users u ON u.user_id = pm.id.user.user_id WHERE p.user.user_id = :user_id AND pm.accept_status = 1")
+    List<Object> getAllRequestJoinToProject(Long user_id);
 }

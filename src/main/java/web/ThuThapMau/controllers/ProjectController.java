@@ -47,7 +47,16 @@ public class ProjectController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
+    }
 
+    @GetMapping("/users/{user_id}/request")
+    public ResponseEntity<List<Object>> getAllRequestJoinToProject(@PathVariable Long user_id ){
+        try {
+            List<Object> request = projectService.getAllRequestJoinToProject(user_id);
+            return ResponseEntity.status(200).body(request);
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/users/{id}")
