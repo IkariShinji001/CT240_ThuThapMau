@@ -28,6 +28,7 @@ public class ProjectMemberService {
     }
 
     public void removeMemberFromProject(Long project_id, Long user_id) {
+        System.out.println(project_id + " " + user_id);
         projectMemberRepository.removeMemberFromProject(project_id, user_id);
     }
 

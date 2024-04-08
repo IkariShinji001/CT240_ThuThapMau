@@ -37,6 +37,10 @@ public class ProjectService {
         return projectRepository.findAllPersonalProjectByUserId(userId);
     }
 
+    public List<Object> getAllRequestJoinToProject(Long user_id){
+        return  projectRepository.getAllRequestJoinToProject(user_id);
+    }
+
     public Project findByInviteCode(UUID inviteCode){
         return projectRepository.findByUUID(inviteCode);
     }

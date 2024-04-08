@@ -21,6 +21,7 @@ public class ProjectMemberController {
         List<ProjectMember> members = projectMemberService.getMemberByProjectId(project_id, accept_status);
         return ResponseEntity.status(200).body(members);
     }
+
     @PostMapping("/projects/{project_id}")
     public ResponseEntity<String> addMemberToProject(@PathVariable Long project_id, @RequestBody List<Long> user_ids){
         projectMemberService.addMemberToProject(project_id, user_ids);
@@ -30,6 +31,7 @@ public class ProjectMemberController {
     @GetMapping("/users/{user_id}/request-join-to-project/{inviteCode}")
     public ResponseEntity<UUID> requestJoinToProject(@PathVariable Long user_id, @PathVariable UUID inviteCode){
         System.out.println(inviteCode);
+
         projectMemberService.requestJoinToProject(user_id, inviteCode);
         return ResponseEntity.status(200).body(inviteCode);
     }
