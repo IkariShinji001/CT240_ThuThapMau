@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.Util.JwtTokenProvider;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.util.List;
@@ -72,7 +73,9 @@ public class UserService {
         return userRepository.findByUserEmail(user_mail);
     }
     public User createUser(User newUser){
-        System.out.println(newUser.getUser_image_url());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(newUser.getUser_password());
+        newUser.setUser_password(encodedPassword);
         return userRepository.save(newUser);
     }
     public Optional<User> getUserById(Long id){
@@ -92,12 +95,15 @@ public class UserService {
     }
 
     public User login(User user, HttpServletResponse response){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String userEmail = user.getUser_email();
         String userPassword = user.getUser_password();
-        System.out.println(userEmail + userPassword);
-        User existedUser = userRepository.login(userEmail, userPassword);
-        System.out.println(existedUser);
+        User existedUser = userRepository.findByUserEmail(userEmail);
         if(existedUser != null){
+            boolean passwordMatches = encoder.matches(userPassword, existedUser.getUser_password());
+            if(!passwordMatches){
+                return null;
+            }
             String jwtToken = JwtTokenProvider.createJwt(existedUser);
             Cookie cookie = new Cookie("jwtToken", jwtToken);
             cookie.setMaxAge(7 * 24 * 60 * 60);
