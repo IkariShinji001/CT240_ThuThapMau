@@ -30,10 +30,14 @@ public class ProjectMemberController {
 
     @GetMapping("/users/{user_id}/request-join-to-project/{inviteCode}")
     public ResponseEntity<UUID> requestJoinToProject(@PathVariable Long user_id, @PathVariable UUID inviteCode){
-        System.out.println(inviteCode);
-
         projectMemberService.requestJoinToProject(user_id, inviteCode);
         return ResponseEntity.status(200).body(inviteCode);
+    }
+
+    @GetMapping("/users/{user_id}/notification/request")
+    public ResponseEntity<List<ProjectMember>> getNotificationRequest(@PathVariable Long user_id){
+        List<ProjectMember> list  = projectMemberService.getNotificationRequest(user_id);
+        return ResponseEntity.status(200).body(list);
     }
 
     @PostMapping("/owner-projects/{project_id}")

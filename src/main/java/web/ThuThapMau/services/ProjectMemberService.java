@@ -78,4 +78,9 @@ public class ProjectMemberService {
         newProjectMember.setAccept_status(2);
         projectMemberRepository.save(newProjectMember);
     }
+
+
+    public List<ProjectMember> getNotificationRequest(Long user_id){
+        return projectMemberRepository.getNotificationRequest(user_id);
+    }
 }
