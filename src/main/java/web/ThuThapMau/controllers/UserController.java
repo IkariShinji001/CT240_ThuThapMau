@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.Util.EmailService;
 import web.ThuThapMau.dtos.EmailDto;
+import web.ThuThapMau.dtos.PasswordDto;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
@@ -29,6 +30,7 @@ public class UserController {
     public ResponseEntity<String> sendEmail(@RequestBody EmailDto emailDto) {
         try {
             System.out.println(emailDto);
+            User user = userService.getUserByEmail(emailDto.getUser_email());
             long user_id =  userService.getUserByEmail(emailDto.getUser_email()).getUser_id() ;
             emailService.sendEmail(emailDto.getUser_email(), user_id);
             return ResponseEntity.status(200).body("Gui mail thanh cong");
@@ -36,6 +38,7 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
+
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         try{
@@ -81,9 +84,10 @@ public class UserController {
         }
     }
     @PatchMapping("/reset-password")
-    public  ResponseEntity<String> updatePassword(@RequestParam Long user_id, @RequestBody String newPassword){
+    public  ResponseEntity<String> updatePassword(@RequestParam Long user_id, @RequestBody PasswordDto passwordDto){
         try{
-            userService.updatePassword(user_id, newPassword);
+//
+            userService.updatePassword(user_id, passwordDto.getNewPassword());
             return  ResponseEntity.status(200).body("Cập nhật thành công");
         } catch (Exception e){
             return  ResponseEntity.status(200).body(null);
