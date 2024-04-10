@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,4 +32,10 @@ public class CollectionValue {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private Date collection_created_at;
+
+    @PrePersist
+    protected void onCreate() {
+        this.collection_created_at = new Date();
+    }
 }

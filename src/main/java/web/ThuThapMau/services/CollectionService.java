@@ -10,6 +10,7 @@ import web.ThuThapMau.entities.Collection;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.CollectionRepository;
+import web.ThuThapMau.services.ProjectService;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -97,13 +98,14 @@ public class CollectionService {
         return collectionRepository.findCollectionsByProjectId(project_id);
     }
 
-    public Collection updateCollectionById(Long collectionId, Collection payload) {
+    public void updateCollectionById(Long collectionId, Collection payload) {
         String collectionName = payload != null ? payload.getCollection_name() : null;
         String collectionDescription = payload != null ? payload.getCollection_description() : null;
+        String collectionImageUrl = payload != null ? payload.getCollection_image_url() : null;
         Date collectionStart = payload != null ? payload.getCollection_start() : null;
         Date collectionEnd = payload != null ? payload.getCollection_end() : null;
-        collectionRepository.updateCollectionById(collectionId, collectionName, collectionStart, collectionEnd,collectionDescription);
-        return collectionRepository.findById(collectionId).get();
+
+        collectionRepository.updateCollectionById(collectionId, collectionName, collectionStart, collectionEnd, collectionImageUrl,collectionDescription);
     }
 
 

@@ -32,16 +32,6 @@ public class ProjectMemberService {
         projectMemberRepository.removeMemberFromProject(project_id, user_id);
     }
 
-    public void requestJoinToProject(Long user_id, UUID inviteCode){
-        Project project = projectService.findByInviteCode(inviteCode);
-        User user = userService.getUserById(user_id).get();
-        ProjectMemberId id = new ProjectMemberId(user, project);
-        ProjectMember newRequest = new ProjectMember();
-        newRequest.setAccept_status(1);
-        newRequest.setId(id);
-        projectMemberRepository.save(newRequest);
-    }
-
 
     public void addMemberToProject(Long project_id, List<Long> user_ids) {
         Project project = projectService.getProjectByProjectId(project_id);
@@ -57,6 +47,15 @@ public class ProjectMemberService {
         });
     }
 
+    public void requestJoinToProject(Long user_id, UUID inviteCode){
+        Project project = projectService.findByInviteCode(inviteCode);
+        User user = userService.getUserById(user_id).get();
+        ProjectMemberId id = new ProjectMemberId(user, project);
+        ProjectMember newRequest = new ProjectMember();
+        newRequest.setAccept_status(1);
+        newRequest.setId(id);
+        projectMemberRepository.save(newRequest);
+    }
 
     public void updateMemberStatus(ProjectMemberRequestDto payload) {
         Long project_id = payload.getProject_id();

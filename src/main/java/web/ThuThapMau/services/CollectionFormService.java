@@ -63,14 +63,14 @@ public class CollectionFormService {
         return savedCollectionForm;
     }
 
-    public CollectionForm updateCollectionForm(Long collection_form_id, Long user_id, Long collection_id, String name, List<CollectionAttribute> listAttributes) {
+    public CollectionForm updateCollectionForm(Long id, Long user_id, Long collection_id, String name, List<CollectionAttribute> listAttributes) {
 
         // Find the collection form to update
-        CollectionForm collectionFormToUpdate = collectionFormRepository.findById(collection_form_id).orElse(null);
+        CollectionForm collectionFormToUpdate = collectionFormRepository.findById(id).orElse(null);
 
         // Check if collection form exists
         if (collectionFormToUpdate == null) {
-            throw new RuntimeException("Collection form not found with id: " + collection_form_id);
+            throw new RuntimeException("Collection form not found with id: " + id);
         }
 
         // Update fields (optional, update only if provided)
@@ -97,7 +97,7 @@ public class CollectionFormService {
         }
 
         // Update existing attributes (optional)
-        List<CollectionAttribute> existingAttributes = attributeRepository.findByCollectionFormId(collection_form_id);
+        List<CollectionAttribute> existingAttributes = attributeRepository.findByCollectionFormId(id);
         attributeRepository.deleteAll(existingAttributes);  // Delete existing attributes
 
         // Save updated collection form and create new attributes

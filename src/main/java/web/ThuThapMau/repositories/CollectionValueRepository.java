@@ -15,4 +15,7 @@ public interface CollectionValueRepository extends JpaRepository<CollectionValue
             " WHERE cv.collection_form.collection_form_id = :form_id " +
             "AND cv.user.user_id = :user_id ")
     Long findMaxSubmit(Long form_id, Long user_id);
+
+    @Query("SELECT cv FROM CollectionValue cv WHERE cv.collection_form.collection_form_id = :collection_form_id")
+    List<CollectionValue> findAllValueByFormId(Long collection_form_id);
 }

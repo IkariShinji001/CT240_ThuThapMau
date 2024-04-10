@@ -78,10 +78,10 @@ public class CollectionController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Collection> updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload) {
+    public ResponseEntity updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload) {
         try {
-            Collection updatedCollection = collectionService.updateCollectionById(id, payload);
-            return ResponseEntity.status(200).body(updatedCollection);
+            collectionService.updateCollectionById(id, payload);
+            return ResponseEntity.status(200).body("Cập nhật thành công");
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
