@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.Util.JwtTokenProvider;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.repositories.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Semaphore;
 
 @Service
 public class UserService {
@@ -41,15 +41,15 @@ public class UserService {
 
     public Optional<User> updateUserImage(Long user_id, MultipartFile file){
         BlockingQueue<String> sharedSecureUrlQueue = new ArrayBlockingQueue<>(1);
-        Semaphore semaphore = new Semaphore(0);
+
         Thread uploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    System.out.println("Luong Phu");
                     Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
                     String secureUrl = (String) uploadResult.get("secure_url");
                     sharedSecureUrlQueue.put(secureUrl);
-                    semaphore.release();
                 } catch (IOException e){
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -60,10 +60,10 @@ public class UserService {
 
         uploadThread.start();
         try {
-            semaphore.acquire();
             String image = sharedSecureUrlQueue.take();
             userRepository.updateUserImage(user_id, image);
-            return Optional.of(userRepository.findById(user_id).get());
+            Optional<User> updated = Optional.of(userRepository.findById(user_id).get());
+            return updated;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -73,6 +73,9 @@ public class UserService {
         return userRepository.findByUserEmail(user_mail);
     }
     public User createUser(User newUser){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(newUser.getUser_password());
+        newUser.setUser_password(encodedPassword);
         return userRepository.save(newUser);
     }
     public Optional<User> getUserById(Long id){
@@ -92,10 +95,15 @@ public class UserService {
     }
 
     public User login(User user, HttpServletResponse response){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String userEmail = user.getUser_email();
         String userPassword = user.getUser_password();
-        User existedUser = userRepository.login(userEmail, userPassword);
+        User existedUser = userRepository.findByUserEmail(userEmail);
         if(existedUser != null){
+            boolean passwordMatches = encoder.matches(userPassword, existedUser.getUser_password());
+            if(!passwordMatches){
+                return null;
+            }
             String jwtToken = JwtTokenProvider.createJwt(existedUser);
             Cookie cookie = new Cookie("jwtToken", jwtToken);
             cookie.setMaxAge(7 * 24 * 60 * 60);
@@ -105,6 +113,9 @@ public class UserService {
             return existedUser;
         }
         return null;
+    }
+    public void  updatePassword(Long user_id, String newPassword){
+        userRepository.updatePasswordByUser_id(user_id, newPassword);
     }
 
 }
