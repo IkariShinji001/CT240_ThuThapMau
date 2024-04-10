@@ -115,6 +115,7 @@ public class UserService {
         return null;
     }
     public void  updatePassword(Long user_id, String newPassword){
+        System.out.println(newPassword);
         userRepository.updatePasswordByUser_id(user_id, newPassword);
     }
 

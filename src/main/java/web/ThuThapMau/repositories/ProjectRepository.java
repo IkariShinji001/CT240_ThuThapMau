@@ -38,6 +38,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("SELECT p FROM Project p WHERE p.inviteCode = :inviteCode")
     Project findByUUID(UUID inviteCode);
 
-    @Query("SELECT p FROM Project p JOIN ProjectMember pm ON pm.id.project.project_id = p.project_id JOIN users u ON u.user_id = pm.id.user.user_id WHERE p.user.user_id = :user_id AND pm.accept_status = 1")
+    @Query("SELECT p FROM Project p JOIN ProjectMember pm ON pm.id.project.project_id = p.project_id " +
+            "JOIN users u ON u.user_id = pm.id.user.user_id " +
+            "WHERE p.user.user_id = :user_id AND pm.accept_status = 1")
     List<Object> getAllRequestJoinToProject(Long user_id);
 }

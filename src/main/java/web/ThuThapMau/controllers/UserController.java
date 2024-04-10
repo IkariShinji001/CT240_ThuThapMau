@@ -1,19 +1,21 @@
 package web.ThuThapMau.controllers;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.Util.EmailService;
+import web.ThuThapMau.dtos.EmailDto;
+import web.ThuThapMau.dtos.PasswordDto;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -22,7 +24,20 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private Cloudinary cloudinary;
+    private EmailService emailService;
+
+    @PostMapping("/sendEmail/forget-password")
+    public ResponseEntity<String> sendEmail(@RequestBody EmailDto emailDto) {
+        try {
+            System.out.println(emailDto);
+            User user = userService.getUserByEmail(emailDto.getUser_email());
+            long user_id =  userService.getUserByEmail(emailDto.getUser_email()).getUser_id() ;
+            emailService.sendEmail(emailDto.getUser_email(), user_id);
+            return ResponseEntity.status(200).body("Gui mail thanh cong");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -67,7 +82,16 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
-
+    }
+    @PatchMapping("/reset-password")
+    public  ResponseEntity<String> updatePassword(@RequestParam Long user_id, @RequestBody PasswordDto passwordDto){
+        try{
+//
+            userService.updatePassword(user_id, passwordDto.getNewPassword());
+            return  ResponseEntity.status(200).body("Cập nhật thành công");
+        } catch (Exception e){
+            return  ResponseEntity.status(200).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -80,14 +104,6 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/{user_id}/image")
-    public ResponseEntity<User> updateUserImage(@PathVariable Long user_id,
-                                                          @RequestPart("file") MultipartFile file){
-        User updated = userService.updateUserImage(user_id, file).get();
-        System.out.println("dfas "+updated);
-        return ResponseEntity.status(200).body(updated);
-    }
-
     @PostMapping
     public ResponseEntity<User> CreateUser(@RequestBody User payload){
         try{
@@ -97,7 +113,6 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.status(500).body(null);
         }
+
     }
-
-
 }
