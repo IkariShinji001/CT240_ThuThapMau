@@ -86,8 +86,7 @@ public class UserService {
         String userName = dataUser != null ? dataUser.getUser_full_name() : null;
         String userEmail = dataUser != null ? dataUser.getUser_email() : null;
         String userPhoneNumber = dataUser != null ? dataUser.getUser_phone_number() : null;
-        String userPassWord = dataUser != null ? dataUser.getUser_password() : null;
-        userRepository.updateUserById(id, userName, userEmail, userPhoneNumber, userPassWord);
+        userRepository.updateUserById(id, userName, userEmail, userPhoneNumber);
     }
 
     public void deleteUser(Long id) {
@@ -115,8 +114,9 @@ public class UserService {
         return null;
     }
     public void  updatePassword(Long user_id, String newPassword){
-        System.out.println(newPassword);
-        userRepository.updatePasswordByUser_id(user_id, newPassword);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(newPassword);
+        userRepository.updatePasswordByUser_id(user_id, hashedPassword);
     }
 
 }

@@ -1,28 +1,17 @@
 package web.ThuThapMau.controllers;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.entities.Collection;
-import web.ThuThapMau.entities.Project;
-import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.CollectionService;
 import web.ThuThapMau.services.ProjectService;
 import web.ThuThapMau.services.UserService;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 @RestController
 @RequestMapping("/api/v1/collections")
@@ -78,10 +67,10 @@ public class CollectionController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload) {
+    public ResponseEntity<Collection> updateCollectionByID(@PathVariable Long id, @RequestBody Collection payload) {
         try {
-            collectionService.updateCollectionById(id, payload);
-            return ResponseEntity.status(200).body("Cập nhật thành công");
+            Collection updated = collectionService.updateCollectionById(id, payload);
+            return ResponseEntity.status(200).body(updated);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }

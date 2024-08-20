@@ -1,19 +1,14 @@
 package web.ThuThapMau.controllers;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import web.ThuThapMau.entities.Project;
 import web.ThuThapMau.services.ProjectService;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -52,13 +47,13 @@ public class ProjectController {
     @GetMapping("/users/{user_id}/request")
     public ResponseEntity<List<Object>> getAllRequestJoinToProject(@PathVariable Long user_id ){
         try {
+//            danh sach cac project
             List<Object> request = projectService.getAllRequestJoinToProject(user_id);
             return ResponseEntity.status(200).body(request);
         }catch (Exception e){
             return ResponseEntity.status(500).body(null);
         }
     }
-
     @GetMapping("/users/{id}")
     public ResponseEntity<List<Project>> getAllProjectByUserId(@PathVariable(name = "id") Long user_id, @RequestParam(required = false) String project_name, @RequestParam Long accept_status) {
         try {

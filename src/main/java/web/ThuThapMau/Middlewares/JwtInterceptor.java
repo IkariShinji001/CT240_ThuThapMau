@@ -41,7 +41,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
+    public String getJwtFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

@@ -1,21 +1,25 @@
 package web.ThuThapMau.controllers;
 
-import com.cloudinary.Cloudinary;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import web.ThuThapMau.Middlewares.JwtInterceptor;
 import web.ThuThapMau.Util.EmailService;
+import web.ThuThapMau.Util.JwtTokenProvider;
 import web.ThuThapMau.dtos.EmailDto;
 import web.ThuThapMau.dtos.PasswordDto;
 import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -25,6 +29,10 @@ public class UserController {
     private UserService userService;
     @Autowired
     private EmailService emailService;
+    @Autowired 
+    private JwtInterceptor jwtInterceptor;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/sendEmail/forget-password")
     public ResponseEntity<String> sendEmail(@RequestBody EmailDto emailDto) {
@@ -39,6 +47,19 @@ public class UserController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Boolean> logout(HttpServletResponse response, @CookieValue(name = "jwtToken", required = false) String jwtToken) {
+        if (jwtToken != null) {
+            Cookie cookie = new Cookie("jwtToken", null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.ok(false);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         try{
@@ -46,6 +67,21 @@ public class UserController {
             return ResponseEntity.status(200).body(users);
         }catch (Exception e){
             return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<Boolean> VerifyUser(HttpServletRequest request){
+        String jwt = jwtInterceptor.getJwtFromRequest(request);
+        System.out.println(jwt);
+        try{
+            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
+                return  ResponseEntity.status(200).body(true);
+            }else {
+                return  ResponseEntity.status(400).body(false);
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(false);
         }
     }
 
@@ -94,6 +130,13 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/{user_id}/image")
+    public ResponseEntity<Optional<User>> updateUserImage(@PathVariable Long user_id,
+                                                          @RequestPart("file") MultipartFile file){
+        Optional<User> updated = userService.updateUserImage(user_id, file);
+        System.out.println(updated);
+        return ResponseEntity.status(200).body(updated);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         try {
@@ -104,15 +147,5 @@ public class UserController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<User> CreateUser(@RequestBody User payload){
-        try{
-            payload.setUser_image_url("https://as2.ftcdn.net/v2/jpg/04/10/43/77/1000_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg");
-            User newuser =  userService.createUser(payload);
-            return ResponseEntity.status(200).body(newuser);
-        } catch (Exception e){
-            return ResponseEntity.status(500).body(null);
-        }
 
-    }
 }

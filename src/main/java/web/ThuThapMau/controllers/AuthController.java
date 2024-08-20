@@ -11,13 +11,13 @@ import web.ThuThapMau.entities.User;
 import web.ThuThapMau.services.UserService;
 
 @RestController
-@RequestMapping("/public/login")
+@RequestMapping("/public")
 public class AuthController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping()
+    @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user, HttpServletResponse response) {
         try {
             User existedUser = userService.login(user, response);
@@ -29,5 +29,17 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<User> CreateUser(@RequestBody User payload){
+        try{
+            payload.setUser_image_url("https://as2.ftcdn.net/v2/jpg/04/10/43/77/1000_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg");
+            User newuser =  userService.createUser(payload);
+            return ResponseEntity.status(200).body(newuser);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(null);
+        }
+
     }
 }
