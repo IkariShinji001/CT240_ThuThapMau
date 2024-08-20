@@ -73,7 +73,6 @@ public class UserController {
     @GetMapping("/verify")
     public ResponseEntity<Boolean> VerifyUser(HttpServletRequest request){
         String jwt = jwtInterceptor.getJwtFromRequest(request);
-        System.out.println(jwt);
         try{
             if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
                 return  ResponseEntity.status(200).body(true);
